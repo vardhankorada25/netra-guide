@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Directory - Netra Guide</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        :root {
+            --background-color: #f6f5f7;
+            --container-bg: #fff;
+            --text-color: #333;
+            --secondary-text: #666;
+            --input-bg: #eee;
+            --border-color: #ccc;
+            --shadow-color: rgba(0, 0, 0, 0.25);
+            --highlight-color: #ff416c;
+        }
+
+        body.dark-mode {
+            --background-color: #1a1a1a;
+            --container-bg: #2c2c2c;
+            --text-color: #e0e0e0;
+            --secondary-text: #b0b0b0;
+            --input-bg: #444;
+            --border-color: #555;
+            --shadow-color: rgba(255, 255, 255, 0.1);
+            --highlight-color: #ff4b2b;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 20px;
+            color: var(--text-color);
+            opacity: 0;
+            animation: fadeIn 1s ease-in forwards;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .header {
+            height: 50px;
+            width: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+            background-color: var(--container-bg);
+            box-shadow: 0 0 10px var(--shadow-color);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            color: var(--highlight-color);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background-color: var(--container-bg);
+            border-radius: 10px;
+            box-shadow: 0 14px 28px var(--shadow-color), 0 10px 10px var(--shadow-color);
+            padding: 20px;
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out 0.2s forwards;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--text-color);
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            font-weight: bold;
+            opacity: 0;
+            animation: slideDown 0.8s ease-out 0.2s forwards;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #search {
+            width: 100%;
+            max-width: 600px;
+            padding: 12px 15px;
+            margin: 0 auto 20px;
+            display: block;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-sizing: border-box;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            opacity: 0;
+            transform: scale(0.9);
+            animation: scaleIn 0.6s ease-out 0.4s forwards;
+            transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #search:focus {
+            border-color: var(--highlight-color);
+            box-shadow: 0 0 5px rgba(255, 65, 108, 0.5);
+            transform: scale(1.02);
+            outline: none;
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        #filters {
+            margin-bottom: 20px;
+            text-align: center;
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out 0.6s forwards;
+        }
+
+        #filters input, #filters select {
+            padding: 12px 15px;
+            margin: 0 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            width: 200px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            opacity: 0;
+            transform: translateY(10px);
+            animation: slideUp 0.6s ease-out forwards;
+            transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #filters input:nth-child(1) { animation-delay: 0.8s; }
+        #filters select:nth-child(2) { animation-delay: 0.9s; }
+
+        #filters input:focus, #filters select:focus {
+            border-color: var(--highlight-color);
+            box-shadow: 0 0 5px rgba(255, 65, 108, 0.5);
+            transform: scale(1.02);
+            outline: none;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #faculty-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .faculty-card {
+            background-color: var(--container-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            margin: 10px;
+            width: 250px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 0 10px var(--shadow-color);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .faculty-card.visible {
+            animation: slideUpFadeIn 0.6s ease-out forwards;
+        }
+
+        @keyframes slideUpFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .faculty-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px var(--shadow-color);
+        }
+
+        .faculty-card img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 2px solid var(--highlight-color);
+            transition: transform 0.3s ease;
+        }
+
+        .faculty-card:hover img {
+            transform: rotate(5deg) scale(1.1);
+        }
+
+        .faculty-card h2 {
+            font-size: 1.3em;
+            margin: 10px 0;
+            color: var(--text-color);
+            font-weight: bold;
+        }
+
+        .faculty-card p {
+            font-size: 0.9em;
+            color: var(--secondary-text);
+            margin: 5px 0;
+        }
+
+        .faculty-card .social-icons {
+            margin: 15px 0;
+        }
+
+        .faculty-card .social-icons a {
+            color: var(--highlight-color);
+            margin: 0 8px;
+            font-size: 1.2em;
+            text-decoration: none;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .faculty-card .social-icons a:hover {
+            color: #ff4b2b;
+            transform: translateY(-3px);
+        }
+
+        .faculty-card .resume-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #ff4b2b, #ff416c);
+            border: none;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        .faculty-card .resume-btn:hover {
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            transform: translateY(-3px);
+        }
+
+        .no-results {
+            font-size: 1.2em;
+            color: var(--secondary-text);
+            text-align: center;
+            width: 100%;
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        @media screen and (max-width: 480px) {
+            #filters {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            #filters input
+            {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="theme-toggle" aria-label="Toggle theme">
+            <i class="fas fa-moon"></i>
+        </button>
+    </div>
+    <div class="container">
+        <h1>Faculty Directory</h1>
+        <input type="text" id="search" placeholder="Search by name, about, or subjects">
+        <div id="filters">
+            <input type="text" id="location-filter" placeholder="Filter by location">
+            <select id="experience-filter">
+                <option value="">All Experiences</option>
+                <option value="0-5">Less than 5 years</option>
+                <option value="5-10">5-10 years</option>
+                <option value="10+">More than 10 years</option>
+            </select>
+        </div>
+        <div id="faculty-list">
+            <!-- Faculty cards will be appended here -->
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBJ8QFjU5tgTYmqjPglnDR6exszorUYXK8",
+            authDomain: "netra-guide.firebaseapp.com",
+            projectId: "netra-guide",
+            storageBucket: "netra-guide.firebasestorage.app",
+            messagingSenderId: "523274533182",
+            appId: "1:523274533182:web:221c3477c8a04d9c43546f",
+            measurementId: "G-K7PSM8EPCG"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        async function getAllFaculty() {
+            try {
+                const snapshot = await get(ref(database, "users"));
+                const facultyList = [];
+                snapshot.forEach(childSnapshot => {
+                    facultyList.push(childSnapshot.val());
+                });
+                return facultyList;
+            } catch (error) {
+                console.error("Error fetching faculty data:", error);
+                return [];
+            }
+        }
+
+        function displayFaculty(facultyList) {
+            const facultyListDiv = document.getElementById("faculty-list");
+            facultyListDiv.innerHTML = "";
+            if (facultyList.length === 0) {
+                facultyListDiv.innerHTML = '<p class="no-results">No faculty found.</p>';
+                return;
+            }
+            facultyList.forEach((faculty, index) => {
+                const card = document.createElement("div");
+                card.className = "faculty-card";
+
+                let cardContent = `
+                    <img src="${faculty.photoUrl || 'default-photo.png'}" alt="${faculty.name || 'Faculty'}">
+                    <h2>${faculty.name || 'Unnamed Faculty'}</h2>
+                `;
+
+                for (const [key, value] of Object.entries(faculty)) {
+                    if (key !== "photoUrl" && key !== "name") {
+                        let displayValue = value;
+                        if (Array.isArray(value)) {
+                            displayValue = value.join(", ");
+                        } else if (value === null || value === undefined) {
+                            displayValue = "N/A";
+                        } else if (typeof value === "object") {
+                            displayValue = JSON.stringify(value);
+                        }
+                        const displayKey = key.charAt(0).toUpperCase() + key.slice(1);
+                        cardContent += `<p><strong>${displayKey}:</strong> ${displayValue}</p>`;
+                    }
+                }
+
+                
+
+                card.innerHTML = cardContent;
+                facultyListDiv.appendChild(card);
+            });
+
+            checkVisibility();
+        }
+
+        function getExperienceYears(experience) {
+            const match = experience.match(/\d+/);
+            return match ? parseInt(match[0], 10) : 0;
+        }
+
+        function filterFaculty(facultyList, searchTerm, location, experienceRange) {
+            return facultyList.filter(faculty => {
+                const searchLower = searchTerm.toLowerCase();
+                const nameMatch = faculty.name && faculty.name.toLowerCase().includes(searchLower);
+                const aboutMatch = faculty.about && faculty.about.toLowerCase().includes(searchLower);
+                const subjectsMatch = faculty.subjects && faculty.subjects.some(subject => 
+                    subject.toLowerCase().includes(searchLower)
+                );
+                const locationMatch = faculty.location && faculty.location.toLowerCase().includes(location.toLowerCase());
+                const experienceYears = faculty.experience ? getExperienceYears(faculty.experience) : 0;
+                let experienceMatch = true;
+
+                if (experienceRange) {
+                    if (experienceRange === "0-5") {
+                        experienceMatch = experienceYears < 5;
+                    } else if (experienceRange === "5-10") {
+                        experienceMatch = experienceYears >= 5 && experienceYears <= 10;
+                    } else if (experienceRange === "10+") {
+                        experienceMatch = experienceYears > 10;
+                    }
+                }
+
+                return (nameMatch || aboutMatch || subjectsMatch || !searchTerm) && 
+                       (locationMatch || !location) && 
+                       experienceMatch;
+            });
+        }
+
+        function checkVisibility() {
+            const cards = document.querySelectorAll(".faculty-card");
+            const triggerBottom = window.innerHeight * 0.8;
+
+            cards.forEach((card, index) => {
+                const cardTop = card.getBoundingClientRect().top;
+                if (cardTop < triggerBottom) {
+                    card.classList.add("visible");
+                    card.style.animationDelay = `${index * 0.1}s`;
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            const facultyList = await getAllFaculty();
+            displayFaculty(facultyList);
+
+            const searchInput = document.getElementById("search");
+            const locationInput = document.getElementById("location-filter");
+            const experienceSelect = document.getElementById("experience-filter");
+            const themeToggle = document.querySelector('.theme-toggle');
+            const body = document.body;
+
+            // Theme toggle logic
+            if (localStorage.getItem('theme') === 'dark') {
+                body.classList.add('dark-mode');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            }
+
+            themeToggle.addEventListener('click', () => {
+                body.classList.toggle('dark-mode');
+                if (body.classList.contains('dark-mode')) {
+                    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+
+            function updateDisplay() {
+                const searchTerm = searchInput.value.trim();
+                const location = locationInput.value.trim();
+                const experienceRange = experienceSelect.value;
+                const filteredList = filterFaculty(facultyList, searchTerm, location, experienceRange);
+                displayFaculty(filteredList);
+            }
+
+            searchInput.addEventListener("input", updateDisplay);
+            locationInput.addEventListener("input", updateDisplay);
+            experienceSelect.addEventListener("change", updateDisplay);
+
+            window.addEventListener("scroll", checkVisibility);
+        });
+    </script>
+</body>
+</html>

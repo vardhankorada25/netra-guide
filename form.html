@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Information Form</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            margin: 20px auto;
+            max-width: 600px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        h1 {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input[type="text"],
+        input[type="tel"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        input[type="text"]:focus,
+        input[type="立法tel"]:focus,
+        input[type="email"]:focus,
+        textarea:focus {
+            border-color: #ff416c;
+            box-shadow: 0 0 5px rgba(255, 65, 108, 0.5);
+            outline: none;
+        }
+        textarea {
+            height: 100px;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        #photo-box {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            border: 2px dashed #ccc;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+        #photo-box:hover {
+            border-color: #ff416c;
+        }
+        #photo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+        #photo-box span {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ccc;
+            font-size: 14px;
+            text-align: center;
+        }
+        #edit-photo {
+            display: none;
+            margin-top: 10px;
+            text-align: center;
+            cursor: pointer;
+            color: #ff416c;
+            text-decoration: underline;
+        }
+        button[type="submit"] {
+            background-color: #ff416c;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block;
+            margin: 0 auto;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        button[type="submit"]:hover {
+            background-color: #ff4b2b;
+            transform: scale(1.05);
+        }
+        #message {
+            margin-top: 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Faculty Information Form</h1>
+        <form id="faculty-form">
+            <div class="form-container">
+                <div class="photo-section">
+                    <div id="photo-box">
+                        <span id="photo-placeholder">Click to add photo</span>
+                        <img id="photo-img" alt="Faculty Photo">
+                        <input type="file" id="photo" name="photo" accept="image/*">
+                    </div>
+                    <div id="edit-photo">Edit Photo</div>
+                </div>
+                <div class="details-section">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" placeholder="Enter faculty's full name" required>
+                    <label for="mobile">Mobile No:</label>
+                    <input type="tel" id="mobile" name="mobile" placeholder="Enter faculty's mobile number" required>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" placeholder="Enter faculty's email address" required>
+                    <label for="about">About:</label>
+                    <textarea id="about" name="about" placeholder="Tell us about the faculty"></textarea>
+                    <label for="subjects">Subjects:</label>
+                    <textarea id="subjects" name="subjects" placeholder="Enter subjects, one per line (e.g., Math\nScience\nEnglish)" required></textarea>
+                    <label for="experience">Experience:</label>
+                    <input type="text" id="experience" name="experience" placeholder="Enter faculty's years of experience" required>
+                    <label for="location">Location:</label>
+                    <input type="text" id="location" name="location" placeholder="Enter faculty's location" required>
+                </div>
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="message"></div>
+    </div>
+    <script type="module">
+        const form = document.getElementById('faculty-form');
+        const messageDiv = document.getElementById('message');
+        const photoInput = document.getElementById('photo');
+        const photoBox = document.getElementById('photo-box');
+        const photoImg = document.getElementById('photo-img');
+        const photoPlaceholder = document.getElementById('photo-placeholder');
+        const editPhoto = document.getElementById('edit-photo');
+  
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";   
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBJ8QFjU5tgTYmqjPglnDR6exszorUYXK8",
+            authDomain: "netra-guide.firebaseapp.com",
+            projectId: "netra-guide",
+            storageBucket: "netra-guide.firebasestorage.app",
+            messagingSenderId: "523274533182",
+            appId: "1:523274533182:web:221c3477c8a04d9c43546f",
+            measurementId: "G-K7PSM8EPCG"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const defaultPhotoUrl = 'https://tse3.mm.bing.net/th?id=OIP.6Rg_k8aQuRkZaBYnzOUJVwHaHa&pid=Api&P=0&h=180';
+
+        // Handle photo input change
+        photoInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    photoImg.src = e.target.result;
+                    photoImg.style.display = 'block';
+                    photoPlaceholder.style.display = 'none';
+                    photoInput.style.display = 'none';
+                    editPhoto.style.display = 'block';
+                    photoBox.style.borderColor = '#ccc'; // Reset border color on valid selection
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Handle edit photo click
+        editPhoto.addEventListener('click', function() {
+            photoInput.style.display = 'block';
+            photoInput.click();
+        });
+
+        // Trigger file input click when photo-box is clicked
+        photoBox.addEventListener('click', function() {
+            if (photoInput.style.display !== 'none') {
+                photoInput.click();
+            }
+        });
+
+        function retrivedata() {
+            const useremail = localStorage.getItem("userEmail");
+            const dbKey = useremail.replace(/[.#$[\]]/g, "_");
+            const dbRef = ref(database);
+
+            get(child(dbRef, "users/" + dbKey))
+            .then((snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    document.getElementById("name").value = data.name || "";
+                    document.getElementById("mobile").value = data.mobile || "";
+                    document.getElementById("email").value = data.email || "";
+                    document.getElementById("about").value = data.about || "";
+                    document.getElementById("subjects").value = data.subjects ? data.subjects.join('\n') : "";
+                    document.getElementById("experience").value = data.experience || "";
+                    document.getElementById("location").value = data.location || "";
+
+                    if (data.photoUrl) {
+                        photoImg.src = data.photoUrl;
+                        photoImg.style.display = "block";
+                        photoPlaceholder.style.display = "none";
+                        editPhoto.style.display = "block";
+                    } else {
+                        photoImg.src = "";
+                        photoImg.style.display = "none";
+                        photoPlaceholder.style.display = "block";
+                        editPhoto.style.display = "none";
+                    }
+                }
+            })
+            .catch((error) => {
+                console.error("Error fetching data:", error);
+                alert("An error occurred. Please try again.");
+            });
+        }
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Validate photo input
+            if (photoInput.files.length === 0 && !photoImg.src) {
+                alert('Please select a photo.');
+                photoBox.style.borderColor = 'red';
+                return;
+            }
+
+            const name = document.getElementById("name").value.trim();
+            const mobile = document.getElementById("mobile").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const about = document.getElementById("about").value.trim();
+            const subjectsText = document.getElementById("subjects").value.trim();
+            const subjectsArray = subjectsText.split('\n').map(subject => subject.trim()).filter(subject => subject !== '');
+            const experience = document.getElementById("experience").value.trim();
+            const location = document.getElementById("location").value.trim();
+
+            if (!email) {
+                alert("Please enter an email address.");
+                return;
+            }
+
+            if (subjectsArray.length === 0) {
+                alert("Please enter at least one subject.");
+                return;
+            }
+
+            const dbKey = email.replace(/[.#$[\]]/g, "_");
+            const photoUrl = photoImg.src || defaultPhotoUrl;
+            set(ref(database, "users/" + dbKey), {
+                name: name,
+                mobile: mobile,
+                email: email,
+                about: about,
+                subjects: subjectsArray,
+                experience: experience,
+                location: location,
+                photoUrl: photoUrl.src
+            })
+            .then(() => {
+                alert("Data saved successfully!");
+            })
+            .catch((error) => {
+                console.error("Firebase error:", error);
+                alert("An error occurred. Please try again.");
+            });
+        });
+
+        retrivedata();
+    </script>
+</body>
+</html>

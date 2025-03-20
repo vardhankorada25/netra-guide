@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login and Signup</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f6f5f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            max-width: 768px;
+            min-height: 480px;
+        }
+
+        .form-container {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            transition: all 0.6s ease-in-out;
+            width: 50%;
+        }
+
+        .sign-in-container {
+            left: 0;
+            z-index: 2;
+        }
+
+        .sign-up-container {
+            left: 0;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .container.right-panel-active .sign-in-container {
+            transform: translateX(100%);
+        }
+
+        .container.right-panel-active .sign-up-container {
+            transform: translateX(100%);
+            opacity: 1;
+            z-index: 5;
+        }
+
+        .overlay-container {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 50%;
+            height: 100%;
+            overflow: hidden;
+            transition: transform 0.6s ease-in-out;
+            z-index: 100;
+        }
+
+        .container.right-panel-active .overlay-container {
+            transform: translateX(-100%);
+        }
+
+        .overlay {
+            background: linear-gradient(to right, #ff4b2b, #ff416c);
+            color: #ffffff;
+            position: relative;
+            left: -100%;
+            height: 100%;
+            width: 200%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .container.right-panel-active .overlay {
+            transform: translateX(50%);
+        }
+
+        .overlay-panel {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 0 40px;
+            text-align: center;
+            top: 0;
+            height: 100%;
+            width: 50%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .overlay-left {
+            transform: translateX(-20%);
+        }
+
+        .container.right-panel-active .overlay-left {
+            transform: translateX(0);
+        }
+
+        .overlay-right {
+            right: 0;
+            transform: translateX(0);
+        }
+
+        .container.right-panel-active .overlay-right {
+            transform: translateX(20%);
+        }
+
+        button {
+            border-radius: 20px;
+            border: 1px solid #ff4b2b;
+            background-color: #ff4b2b;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 12px 45px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: transform 80ms ease-in;
+            cursor: pointer;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        button.ghost {
+            background-color: transparent;
+            border-color: #ffffff;
+        }
+
+        form {
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            padding: 0 50px;
+            height: 100%;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        input {
+            background-color: #eee;
+            border: none;
+            padding: 12px 15px;
+            margin: 8px 0;
+            width: 100%;
+            font-size: 14px;
+        }
+
+        .switch-button {
+            position: absolute;
+            bottom: 20px;
+            background: none;
+            border: none;
+            color: #ff4b2b;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 14px;
+            text-transform: none;
+            padding: 0;
+            display: none;
+        }
+
+        h1 {
+            font-weight: bold;
+            margin: 0;
+            font-size: 24px;
+        }
+
+        p {
+            font-size: 14px;
+            font-weight: 100;
+            line-height: 20px;
+            letter-spacing: 0.5px;
+            margin: 20px 0 30px;
+        }
+
+        .password-toggle {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            margin: 8px 0;
+        }
+
+        .password-toggle input[type="checkbox"] {
+            margin-right: 10px;
+            width: auto;
+        }
+
+        .password-toggle label {
+            font-size: 12px;
+            color: #333;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                min-height: 400px;
+                max-width: 100%;
+            }
+
+            .form-container {
+                width: 100%;
+            }
+
+            .overlay-container {
+                display: none;
+            }
+
+            .sign-in-container,
+            .sign-up-container {
+                width: 100%;
+            }
+
+            .container.right-panel-active .sign-in-container {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            .container.right-panel-active .sign-up-container {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            form {
+                padding: 0 30px;
+            }
+
+            button {
+                padding: 10px 35px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                min-height: 350px;
+            }
+
+            .switch-button {
+                display: block;
+            }
+
+            form {
+                padding: 0 20px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            p {
+                font-size: 12px;
+                margin: 15px 0 20px;
+            }
+
+            input {
+                padding: 10px 12px;
+                font-size: 12px;
+            }
+
+            button {
+                padding: 8px 30px;
+                font-size: 11px;
+            }
+
+            .password-toggle label {
+                font-size: 11px;
+            }
+
+            /* Neat Transitions for Mobile */
+            .sign-in-container {
+                transform: translateX(0);
+                opacity: 1;
+                transition: transform 0.6s ease-in-out, opacity 0.3s ease-in-out;
+            }
+
+            .sign-up-container {
+                transform: translateX(100%);
+                opacity: 0;
+                transition: transform 0.6s ease-in-out, opacity 0.3s ease-in-out;
+            }
+
+            .container.right-panel-active .sign-in-container {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+
+            .container.right-panel-active .sign-up-container {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container sign-up-container">
+            <form id="signup-form">
+                <h1>Create Account</h1>
+                <input type="text" placeholder="Name" id="signup-name" required />
+                <input type="email" placeholder="Email" id="signup-email" required />
+                <input type="password" placeholder="Password" id="signup-password" required />
+                <div class="password-toggle">
+                    <input type="checkbox" id="signup-show-password">
+                    <label for="signup-show-password">Show Password</label>
+                </div>
+                <button type="submit" class="submit">Sign Up</button>
+                <button type="button" class="switch-button" id="signIn1">Already have an account? Sign In</button>
+                <div id="message"></div> 
+            </form>
+        </div>
+        <div class="form-container sign-in-container">
+            <form id="login-form">
+                <h1>Sign in</h1>
+                <input type="email" placeholder="Email" id="login-email" required />
+                <input type="password" placeholder="Password" id="login-password" required />
+                <div class="password-toggle">
+                    <input type="checkbox" id="login-show-password">
+                    <label for="login-show-password">Show Password</label>
+                </div>
+                <button type="submit">Sign In</button>
+                <button type="button" class="switch-button" id="signUp1">Need an account? Sign Up</button>
+            </form>
+        </div>
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Welcome Back!</h1>
+                    <p>To keep connected with us please login with your personal info</p>
+                    <button class="ghost" id="signIn">Sign In</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>Hello, Professors!</h1>
+                    <p>Enter your personal details and start journey with us</p>
+                    <button class="ghost" id="signUp">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-analytics.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js';
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBJ8QFjU5tgTYmqjPglnDR6exszorUYXK8",
+        authDomain: "netra-guide.firebaseapp.com",
+        projectId: "netra-guide",
+        storageBucket: "netra-guide.firebasestorage.app",
+        messagingSenderId: "523274533182",
+        appId: "1:523274533182:web:221c3477c8a04d9c43546f",
+        measurementId: "G-K7PSM8EPCG"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const signUpButton = document.getElementById('signUp');
+        const signInButton = document.getElementById('signIn');
+        const container = document.querySelector('.container');
+        const loginPassword = document.getElementById('login-password');
+        const signupPassword = document.getElementById('signup-password');
+        const loginShowPassword = document.getElementById('login-show-password');
+        const signupShowPassword = document.getElementById('signup-show-password');
+
+        signUpButton.addEventListener('click', () => {
+            container.classList.add('right-panel-active');
+        });
+
+        signInButton.addEventListener('click', () => {
+            container.classList.remove('right-panel-active');
+        });
+
+        document.getElementById('signUp1').addEventListener('click', () => {
+            container.classList.add('right-panel-active');
+        });
+
+        document.getElementById('signIn1').addEventListener('click', () => {
+            container.classList.remove('right-panel-active');
+        });
+
+        loginShowPassword.addEventListener('change', function() {
+            loginPassword.type = this.checked ? 'text' : 'password';
+        });
+
+        signupShowPassword.addEventListener('change', function() {
+            signupPassword.type = this.checked ? 'text' : 'password';
+        });
+
+        const loginForm = document.getElementById('login-form');
+        loginForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const emailInput = document.getElementById("login-email");
+            const passwordInput = document.getElementById("login-password");
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+            localStorage.setItem("userEmail", email);
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    if (user) {
+                        if (user.emailVerified) {
+                            window.location.href = 'form.html';
+                        } else {
+                            alert("Please verify your email first. Check your inbox and click the verification link.");
+                        }
+                    }
+                })
+                .catch((error) => {
+                    alert("Invalid Email or Password");
+                    emailInput.value = "";
+                    passwordInput.value = "";
+                });
+        });
+
+        const signupForm = document.getElementById('signup-form');
+        signupForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const signupName = document.getElementById("signup-name").value.trim();
+            const emailInput = document.getElementById("signup-email");
+            const passwordInput = document.getElementById("signup-password");
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                await sendEmailVerification(user);
+                alert("Account created, please verify your email and then log in.");
+                container.classList.add('right-panel-active');
+                await auth.signOut();
+                emailInput.value = "";
+                passwordInput.value = "";
+            } catch (error) {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log("Error Code:", errorCode, "Message:", errorMessage);
+                const messageDiv = document.getElementById('message');
+                messageDiv.textContent = `Error: ${errorMessage}`;
+                if (errorCode === 'auth/email-already-in-use') {
+                    messageDiv.textContent = 'Email already in use';
+                } else if (errorCode === 'auth/weak-password') {
+                    messageDiv.textContent = 'Password too weak';
+                } else if (errorCode === 'auth/invalid-email') {
+                    messageDiv.textContent = 'Invalid Email';
+                }
+                emailInput.value = "";
+                passwordInput.value = "";
+            }
+        });
+    });
+    </script>
+</body>
+</html>
