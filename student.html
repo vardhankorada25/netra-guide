@@ -7,36 +7,52 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         :root {
-            --background-color: #f6f5f7;
+            --background-color: #f4f4f4;
             --container-bg: #fff;
             --text-color: #333;
             --secondary-text: #666;
-            --input-bg: #eee;
-            --border-color: #ccc;
-            --shadow-color: rgba(0, 0, 0, 0.25);
+            --input-bg: #f9f9f9;
+            --border-color: #ff4b2b;
+            --shadow-color: rgba(0, 0, 0, 0.1);
             --highlight-color: #ff416c;
+            --accent-color: #ff4b2b;
         }
 
         body.dark-mode {
-            --background-color: #1a1a1a;
-            --container-bg: #2c2c2c;
-            --text-color: #e0e0e0;
-            --secondary-text: #b0b0b0;
-            --input-bg: #444;
-            --border-color: #555;
-            --shadow-color: rgba(255, 255, 255, 0.1);
-            --highlight-color: #ff4b2b;
+            --background-color: #333;
+            --container-bg: #444;
+            --text-color: #f4f4f4;
+            --secondary-text: #ccc;
+            --input-bg: #555;
+            --border-color: #ff4b2b;
+            --shadow-color: rgba(0, 0, 0, 0.2);
+            --highlight-color: #ff416c;
+            --accent-color: #ff4b2b;
         }
 
         body {
             font-family: 'Arial', sans-serif;
-            background-color: var(--background-color);
+            background: linear-gradient(135deg, var(--background-color), #f9f9f9 50%, var(--background-color));
             margin: 0;
             padding: 20px;
             color: var(--text-color);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
             opacity: 0;
             animation: fadeIn 1s ease-in forwards;
-            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 75, 43, 0.1) 10%, transparent 50%);
+            opacity: 0.3;
+            z-index: -1;
         }
 
         @keyframes fadeIn {
@@ -45,76 +61,123 @@
         }
 
         .header {
-            height: 50px;
-            width: 50px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             display: flex;
             justify-content: center;
-            margin-bottom: 10px;
-            background-color: var(--container-bg);
-            box-shadow: 0 0 10px var(--shadow-color);
+            align-items: center;
+            margin: 0 auto 20px;
+            background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+            box-shadow: 0 0 15px var(--shadow-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            width: 120%;
+            height: 120%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            20% { transform: translateX(100%); }
+            100% { transform: translateX(100%); }
         }
 
         .theme-toggle {
             background: none;
             border: none;
-            font-size: 1.5em;
+            font-size: 1.8em;
             cursor: pointer;
-            color: var(--text-color);
-            transition: color 0.3s ease;
+            color: #fff;
+            transition: transform 0.3s ease;
+            z-index: 1;
         }
 
         .theme-toggle:hover {
-            color: var(--highlight-color);
+            transform: scale(1.2) rotate(15deg);
         }
 
         .container {
-            width: 100%;
+            width: 90%;
             max-width: 1200px;
-            background-color: var(--container-bg);
-            border-radius: 10px;
-            box-shadow: 0 14px 28px var(--shadow-color), 0 10px 10px var(--shadow-color);
-            padding: 20px;
-            opacity: 0;
-            animation: fadeIn 0.8s ease-out 0.2s forwards;
+            margin: 0 auto;
+            background: var(--container-bg);
+            border-radius: 15px;
+            box-shadow: 0 0 20px var(--shadow-color);
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid transparent;
+            background-clip: padding-box;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+            z-index: -1;
+            border-radius: 17px;
         }
 
         h1 {
             text-align: center;
             color: var(--text-color);
-            font-size: 2.5em;
-            margin-bottom: 20px;
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 25px;
             font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
             opacity: 0;
             animation: slideDown 0.8s ease-out 0.2s forwards;
         }
 
         @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-20px); }
+            from { opacity: 0; transform: translateY(-30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         #search {
             width: 100%;
-            max-width: 600px;
-            padding: 12px 15px;
-            margin: 0 auto 20px;
+            max-width: 700px;
+            padding: 15px 20px;
+            margin: 0 auto 25px;
             display: block;
             border: 1px solid var(--border-color);
-            border-radius: 4px;
+            border-radius: 25px;
             box-sizing: border-box;
-            background-color: var(--input-bg);
+            background: var(--input-bg);
             color: var(--text-color);
+            font-size: 1.1rem;
             opacity: 0;
             transform: scale(0.9);
             animation: scaleIn 0.6s ease-out 0.4s forwards;
-            transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 0 5px var(--shadow-color);
         }
-
+        #search:hover {
+            border-color: var(--highlight-color);
+            box-shadow: 0 0 5px var(--highlight-color), inset 0 0 3px var(--shadow-color);
+            transform: scale(1.03);
+            outline: none;
+        }
         #search:focus {
             border-color: var(--highlight-color);
-            box-shadow: 0 0 5px rgba(255, 65, 108, 0.5);
-            transform: scale(1.02);
+            box-shadow: 0 0 10px var(--highlight-color), inset 0 0 5px var(--shadow-color);
+            transform: scale(1.03);
             outline: none;
         }
 
@@ -124,38 +187,46 @@
         }
 
         #filters {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             text-align: center;
             opacity: 0;
             animation: fadeIn 0.8s ease-out 0.6s forwards;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px; /* Increased gap for better spacing */
         }
 
         #filters input, #filters select {
-            padding: 12px 15px;
-            margin: 0 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            width: 200px;
-            background-color: var(--input-bg);
+            padding: 10px 15px; /* Reduced padding for a slimmer look */
+            border: 2px solid var(--border-color); /* Thinner border */
+            border-radius: 30px; /* More rounded corners */
+            width: 200px; /* Slightly reduced width */
+            background: linear-gradient(45deg, var(--input-bg), #fff); /* Gradient background */
             color: var(--text-color);
+            font-size: 0.95rem; /* Slightly smaller font */
             opacity: 0;
-            transform: translateY(10px);
+            transform: translateY(15px);
             animation: slideUp 0.6s ease-out forwards;
-            transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px var(--shadow-color); /* Lighter shadow */
+            cursor: pointer; /* Added for select element */
         }
 
         #filters input:nth-child(1) { animation-delay: 0.8s; }
         #filters select:nth-child(2) { animation-delay: 0.9s; }
 
+        #filters input:hover, #filters select:hover,
         #filters input:focus, #filters select:focus {
             border-color: var(--highlight-color);
-            box-shadow: 0 0 5px rgba(255, 65, 108, 0.5);
-            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(255, 65, 108, 0.3), inset 0 0 5px var(--shadow-color); /* Enhanced hover/focus shadow */
+            transform: scale(1.05) translateY(0); /* Slight scale up */
+            background: linear-gradient(45deg, #fff, var(--input-bg)); /* Reverse gradient on hover */
             outline: none;
         }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -163,21 +234,25 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
+            gap: 10px;
         }
 
         .faculty-card {
-            background-color: var(--container-bg);
+            background: var(--input-bg);
             color: var(--text-color);
-            border: 1px solid var(--border-color);
-            padding: 20px;
-            margin: 10px;
-            width: 250px;
+            border: 2px solid var(--border-color);
+            padding: 8px;
             text-align: center;
-            border-radius: 10px;
-            box-shadow: 0 0 10px var(--shadow-color);
+            border-radius: 8px;
+            box-shadow: 0 0 6px var(--shadow-color);
+            position: relative;
+            overflow: hidden;
             opacity: 0;
-            transform: translateY(20px);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transform: translateY(10px);
+            transition: all 0.4s ease;
+            width: 100%;
+            max-width: 300px;
+            min-height: 120px;
         }
 
         .faculty-card.visible {
@@ -185,95 +260,113 @@
         }
 
         @keyframes slideUpFadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
+        .faculty-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 75, 43, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
+        }
+
+        .faculty-card:hover::before {
+            opacity: 1;
+        }
+
         .faculty-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 15px var(--shadow-color);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 4px 12px var(--shadow-color);
+            border-color: var(--highlight-color);
         }
 
         .faculty-card img {
-            width: 80px;
-            height: 80px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             object-fit: cover;
-            margin-bottom: 15px;
-            border: 2px solid var(--highlight-color);
-            transition: transform 0.3s ease;
+            margin-bottom: 8px;
+            border: 2px solid var(--accent-color);
+            transition: transform 0.4s ease, border-color 0.4s ease;
+            position: relative;
+            z-index: 1;
         }
 
         .faculty-card:hover img {
-            transform: rotate(5deg) scale(1.1);
+            transform: rotate(10deg) scale(1.1);
+            border-color: var(--highlight-color);
         }
 
         .faculty-card h2 {
-            font-size: 1.3em;
-            margin: 10px 0;
+            font-size: 1em;
+            margin: 8px 0;
             color: var(--text-color);
             font-weight: bold;
+            position: relative;
+            z-index: 1;
+            transition: color 0.4s ease;
+        }
+
+        .faculty-card:hover h2 {
+            color: var(--highlight-color);
         }
 
         .faculty-card p {
-            font-size: 0.9em;
+            font-size: 0.75em;
             color: var(--secondary-text);
-            margin: 5px 0;
+            margin: 3px 0;
+            line-height: 1.3;
+            position: relative;
+            z-index: 1;
         }
 
-        .faculty-card .social-icons {
-            margin: 15px 0;
+        .faculty-card p strong {
+            color: var(--text-color);
+            transition: color 0.4s ease;
         }
 
-        .faculty-card .social-icons a {
+        .faculty-card:hover p strong {
             color: var(--highlight-color);
-            margin: 0 8px;
-            font-size: 1.2em;
-            text-decoration: none;
-            transition: color 0.3s ease, transform 0.3s ease;
-        }
-
-        .faculty-card .social-icons a:hover {
-            color: #ff4b2b;
-            transform: translateY(-3px);
-        }
-
-        .faculty-card .resume-btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background: linear-gradient(45deg, #ff4b2b, #ff416c);
-            border: none;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 20px;
-            font-size: 0.9em;
-            font-weight: bold;
-            text-transform: uppercase;
-            transition: background 0.3s ease, transform 0.3s ease;
-        }
-
-        .faculty-card .resume-btn:hover {
-            background: linear-gradient(45deg, #ff416c, #ff4b2b);
-            transform: translateY(-3px);
         }
 
         .no-results {
-            font-size: 1.2em;
-            color: var(--secondary-text);
+            font-size: 1.3em;
+            color: var(--highlight-color);
             text-align: center;
             width: 100%;
+            padding: 20px;
             opacity: 0;
             animation: fadeIn 0.8s ease-out forwards;
+            font-style: italic;
         }
+
+        @media screen and (min-width: 768px) {
+            .container {
+                width: 85%;
+            }
+        }
+
         @media screen and (max-width: 480px) {
             #filters {
-                display: flex;
                 flex-direction: column;
                 align-items: center;
             }
-            #filters input
-            {
-                margin-bottom: 20px;
+            #filters input, #filters select {
+                width: 85%; /* Adjusted for mobile */
+                margin-bottom: 15px;
+            }
+            .container {
+                padding: 1rem;
+            }
+            #faculty-list {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
             }
         }
     </style>
@@ -363,8 +456,6 @@
                     }
                 }
 
-                
-
                 card.innerHTML = cardContent;
                 facultyListDiv.appendChild(card);
             });
@@ -428,7 +519,6 @@
             const themeToggle = document.querySelector('.theme-toggle');
             const body = document.body;
 
-            // Theme toggle logic
             if (localStorage.getItem('theme') === 'dark') {
                 body.classList.add('dark-mode');
                 themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
