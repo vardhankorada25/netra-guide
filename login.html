@@ -458,7 +458,7 @@
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
                 await sendEmailVerification(user);
-                alert("Account created, please verify your email and then log in.");
+                alert("Account created, please verify your email and then sign in.");
                 container.classList.add('right-panel-active');
                 await auth.signOut();
                 emailInput.value = "";
