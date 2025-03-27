@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login and Signup</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         * {
             box-sizing: border-box;
@@ -216,6 +217,78 @@
             color: #333;
         }
 
+        /* Toast Notification Styles */
+        #toast-box {
+            position: fixed; /* Changed to fixed to stay on screen regardless of scrolling */
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            align-items: flex-end;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 20px;
+            z-index: 1000; /* Ensure it’s above other elements */
+        }
+
+        .toast {
+            width: 400px;
+            height: 80px;
+            background: #fff;
+            font-weight: 500;
+            margin: 15px 0;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            position: relative;
+            transform: translateX(100%);
+            animation: moveleft 0.5s linear forwards;
+        }
+
+        @keyframes moveleft {
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        .toast i {
+            margin: 0 20px;
+            font-size: 35px;
+            color: green;
+        }
+
+        .toast.error i {
+            color: red;
+        }
+
+        .toast.invalid i {
+            color: orange;
+        }
+
+        .toast::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 5px;
+            background: green;
+            animation: anim 2.95s linear forwards;
+        }
+
+        @keyframes anim {
+            100% {
+                width: 0;
+            }
+        }
+
+        .toast.error::after {
+            background: red;
+        }
+
+        .toast.invalid::after {
+            background: orange;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .container {
@@ -252,6 +325,10 @@
 
             button {
                 padding: 10px 35px;
+            }
+
+            .toast {
+                width: 300px; /* Smaller width for tablets */
             }
         }
 
@@ -295,7 +372,6 @@
                 font-size: 11px;
             }
 
-            /* Neat Transitions for Mobile */
             .sign-in-container {
                 transform: translateX(0);
                 opacity: 1;
@@ -317,6 +393,10 @@
                 transform: translateX(0);
                 opacity: 1;
             }
+
+            .toast {
+                width: 250px; /* Even smaller for mobile */
+            }
         }
     </style>
 </head>
@@ -334,7 +414,6 @@
                 </div>
                 <button type="submit" class="submit">Sign Up</button>
                 <button type="button" class="switch-button" id="signIn1">Already have an account? Sign In</button>
-                <div id="message"></div> 
             </form>
         </div>
         <div class="form-container sign-in-container">
@@ -365,11 +444,11 @@
             </div>
         </div>
     </div>
+    <div id="toast-box"></div> <!-- Moved outside container for fixed positioning -->
 
     <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-analytics.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js';
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification } from 'https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js';
 
     const firebaseConfig = {
         apiKey: "AIzaSyBJ8QFjU5tgTYmqjPglnDR6exszorUYXK8",
@@ -392,6 +471,30 @@
         const signupPassword = document.getElementById('signup-password');
         const loginShowPassword = document.getElementById('login-show-password');
         const signupShowPassword = document.getElementById('signup-show-password');
+        const toastBox = document.getElementById('toast-box');
+
+        // Toast Notification Messages
+        const successMsg = '<i class="fa-solid fa-circle-check"></i> Successfully completed';
+        const errorMsg = '<i class="fa-solid fa-circle-xmark"></i> Error occurred';
+        const invalidMsg = '<i class="fa-solid fa-circle-exclamation"></i> Invalid action';
+
+        // Toast Notification Function
+        function showToast(msg) {
+            let toast = document.createElement('div');
+            toast.classList.add('toast');
+            toast.innerHTML = msg;
+            toastBox.appendChild(toast);
+
+            if (msg.includes('Error') || msg.includes('Invalid')) {
+                toast.classList.add('error');
+            } else if (msg.includes('verify')) {
+                toast.classList.add('invalid');
+            }
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
 
         signUpButton.addEventListener('click', () => {
             container.classList.add('right-panel-active');
@@ -429,16 +532,19 @@
             signInWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
                     const user = userCredential.user;
-                    if (user) {
-                        if (user.emailVerified) {
+                    if (user.emailVerified) {
+                        showToast('<i class="fa-solid fa-circle-check"></i> Successfully signed in');
+                        setTimeout(() => {
                             window.location.href = 'form.html';
-                        } else {
-                            alert("Please verify your email first. Check your inbox and click the verification link.");
-                        }
+                        }, 1000); // Delay redirect to show toast
+                    } else {
+                        showToast('<i class="fa-solid fa-circle-exclamation"></i> Please verify your email first');
+                        emailInput.value = "";
+                        passwordInput.value = "";
                     }
                 })
                 .catch((error) => {
-                    alert("Invalid Email or Password");
+                    showToast('<i class="fa-solid fa-circle-xmark"></i> Invalid Email or Password');
                     emailInput.value = "";
                     passwordInput.value = "";
                 });
@@ -447,8 +553,6 @@
         const signupForm = document.getElementById('signup-form');
         signupForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-
-            const signupName = document.getElementById("signup-name").value.trim();
             const emailInput = document.getElementById("signup-email");
             const passwordInput = document.getElementById("signup-password");
             const email = emailInput.value.trim();
@@ -458,24 +562,28 @@
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
                 await sendEmailVerification(user);
-                alert("Account created, please verify your email and then sign in.");
-                container.classList.add('right-panel-active');
+                showToast('<i class="fa-solid fa-circle-check"></i> Account created, please verify your email');
+                container.classList.remove('right-panel-active'); // Switch to sign-in
                 await auth.signOut();
                 emailInput.value = "";
                 passwordInput.value = "";
             } catch (error) {
                 const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log("Error Code:", errorCode, "Message:", errorMessage);
-                const messageDiv = document.getElementById('message');
-                messageDiv.textContent = `Error: ${errorMessage}`;
-                if (errorCode === 'auth/email-already-in-use') {
-                    messageDiv.textContent = 'Email already in use';
-                } else if (errorCode === 'auth/weak-password') {
-                    messageDiv.textContent = 'Password too weak';
-                } else if (errorCode === 'auth/invalid-email') {
-                    messageDiv.textContent = 'Invalid Email';
+                let message;
+                switch (errorCode) {
+                    case 'auth/email-already-in-use':
+                        message = '<i class="fa-solid fa-circle-xmark"></i> Email already in use';
+                        break;
+                    case 'auth/weak-password':
+                        message = '<i class="fa-solid fa-circle-xmark"></i> Password too weak';
+                        break;
+                    case 'auth/invalid-email':
+                        message = '<i class="fa-solid fa-circle-xmark"></i> Invalid Email';
+                        break;
+                    default:
+                        message = '<i class="fa-solid fa-circle-xmark"></i> Error: ' + error.message;
                 }
+                showToast(message);
                 emailInput.value = "";
                 passwordInput.value = "";
             }
