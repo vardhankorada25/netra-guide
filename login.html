@@ -3,35 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login and Signup</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Login and Signup - Netra Guide</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSB7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: 'Poppins', sans-serif;
         }
 
         body {
-            font-family: 'Arial', sans-serif;
-            background: #f6f5f7;
+            background: #f4f4f4;
+            color: #333;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
             padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+            will-change: transform;
         }
 
         .container {
             background: #fff;
             border-radius: 10px;
-            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
             position: relative;
             overflow: hidden;
             width: 100%;
             max-width: 768px;
             min-height: 480px;
+            opacity: 0;
+            transform: translateY(80px);
+            animation: bounceIn 1.2s ease forwards;
         }
 
         .form-container {
@@ -79,8 +85,8 @@
         }
 
         .overlay {
-            background: linear-gradient(to right, #ff4b2b, #ff416c);
-            color: #ffffff;
+            background: linear-gradient(to right, #ff7043, #ff99cc);
+            color: #fff;
             position: relative;
             left: -100%;
             height: 100%;
@@ -110,6 +116,8 @@
 
         .overlay-left {
             transform: translateX(-20%);
+            opacity: 0;
+            animation: bounceIn 1s ease forwards 0.2s;
         }
 
         .container.right-panel-active .overlay-left {
@@ -119,6 +127,8 @@
         .overlay-right {
             right: 0;
             transform: translateX(0);
+            opacity: 0;
+            animation: bounceIn 1s ease forwards 0.4s;
         }
 
         .container.right-panel-active .overlay-right {
@@ -128,7 +138,7 @@
         button {
             border-radius: 20px;
             border: 1px solid #ff4b2b;
-            background-color: #ff4b2b;
+            background: #ff4b2b;
             color: #ffffff;
             font-size: 12px;
             font-weight: bold;
@@ -136,7 +146,33 @@
             letter-spacing: 1px;
             text-transform: uppercase;
             transition: transform 80ms ease-in;
+            position: relative;
+            overflow: hidden;
             cursor: pointer;
+            animation: neonPulse 1.5s infinite;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(45deg);
+            transition: all 0.6s ease;
+            opacity: 0;
+        }
+
+        button:hover::before {
+            opacity: 1;
+            transform: rotate(45deg) translate(50%, 50%);
+        }
+
+        button:hover {
+            transform: scale(1.1) rotate(3deg);
+            filter: brightness(1.2);
         }
 
         button:active {
@@ -152,8 +188,12 @@
             border-color: #ffffff;
         }
 
+        button.ghost:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
         form {
-            background-color: #ffffff;
+            background: #fff;
             display: flex;
             flex-direction: column;
             padding: 0 50px;
@@ -164,12 +204,20 @@
         }
 
         input {
-            background-color: #eee;
+            background: #eee;
             border: none;
             padding: 12px 15px;
             margin: 8px 0;
             width: 100%;
             font-size: 14px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            background: #fff;
+            border: 2px solid #ff4b2b;
+            outline: none;
         }
 
         .switch-button {
@@ -184,20 +232,34 @@
             text-transform: none;
             padding: 0;
             display: none;
+            transition: all 0.3s ease;
+        }
+
+        .switch-button:hover {
+            color: #ff416c;
+            transform: translateY(-2px);
         }
 
         h1 {
-            font-weight: bold;
+            font-weight: 700;
             margin: 0;
             font-size: 24px;
+            background: linear-gradient(90deg, #ff4b2b, #ff416c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            animation: glitch 1.5s ease forwards;
         }
 
         p {
             font-size: 14px;
-            font-weight: 100;
+            font-weight: 300;
             line-height: 20px;
             letter-spacing: 0.5px;
             margin: 20px 0 30px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: bounceIn 1s ease forwards 0.3s;
         }
 
         .password-toggle {
@@ -205,6 +267,9 @@
             align-items: center;
             width: 100%;
             margin: 8px 0;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: bounceIn 1s ease forwards 0.5s;
         }
 
         .password-toggle input[type="checkbox"] {
@@ -215,11 +280,54 @@
         .password-toggle label {
             font-size: 12px;
             color: #333;
+            transition: color 0.3s ease;
+        }
+
+        .password-toggle:hover label {
+            color: #ff4b2b;
+        }
+
+        /* Forgot Password Button Styles */
+        .forgot-password-btn {
+            background: none;
+            border: none;
+            color: #ff4b2b;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 8px 0;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .forgot-password-btn:hover {
+            color: #ff416c;
+            transform: translateY(-2px);
+        }
+
+        .forgot-password-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 1px;
+            background: #ff4b2b;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .forgot-password-btn:hover::after {
+            width: 50%;
         }
 
         /* Toast Notification Styles */
         #toast-box {
-            position: fixed; /* Changed to fixed to stay on screen regardless of scrolling */
+            position: fixed;
             bottom: 30px;
             right: 30px;
             display: flex;
@@ -227,7 +335,7 @@
             flex-direction: column;
             overflow: hidden;
             padding: 20px;
-            z-index: 1000; /* Ensure it’s above other elements */
+            z-index: 1000;
         }
 
         .toast {
@@ -236,18 +344,16 @@
             background: #fff;
             font-weight: 500;
             margin: 15px 0;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
             display: flex;
             align-items: center;
             position: relative;
             transform: translateX(100%);
-            animation: moveleft 0.5s linear forwards;
+            animation: moveleft 0.5s ease forwards;
+            border-radius: 5px;
         }
 
         @keyframes moveleft {
-            100% {
-                transform: translateX(0);
-            }
+            100% { transform: translateX(0); }
         }
 
         .toast i {
@@ -276,9 +382,7 @@
         }
 
         @keyframes anim {
-            100% {
-                width: 0;
-            }
+            100% { width: 0; }
         }
 
         .toast.error::after {
@@ -287,6 +391,27 @@
 
         .toast.invalid::after {
             background: orange;
+        }
+
+        /* Animations */
+        @keyframes glitch {
+            0% { opacity: 0; transform: translateY(80px) skew(10deg); }
+            20% { opacity: 1; transform: translateY(0) skew(-5deg); }
+            25% { transform: translateY(0) skew(5deg); }
+            30% { transform: translateY(0) skew(-5deg); }
+            100% { opacity: 1; transform: translateY(0) skew(0); }
+        }
+
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: translateY(50px) scale(0.8); }
+            60% { opacity: 1; transform: translateY(-20px) scale(1.1); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes bouncePulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
 
         /* Responsive Design */
@@ -328,7 +453,7 @@
             }
 
             .toast {
-                width: 300px; /* Smaller width for tablets */
+                width: 300px;
             }
         }
 
@@ -395,7 +520,7 @@
             }
 
             .toast {
-                width: 250px; /* Even smaller for mobile */
+                width: 250px;
             }
         }
     </style>
@@ -418,13 +543,14 @@
         </div>
         <div class="form-container sign-in-container">
             <form id="login-form">
-                <h1>Sign in</h1>
+                <h1>Sign In</h1>
                 <input type="email" placeholder="Email" id="login-email" required />
                 <input type="password" placeholder="Password" id="login-password" required />
                 <div class="password-toggle">
                     <input type="checkbox" id="login-show-password">
                     <label for="login-show-password">Show Password</label>
                 </div>
+                <button type="button" class="forgot-password-btn" id="forgot-password">Forgot Password?</button>
                 <button type="submit">Sign In</button>
                 <button type="button" class="switch-button" id="signUp1">Need an account? Sign Up</button>
             </form>
@@ -438,17 +564,17 @@
                 </div>
                 <div class="overlay-panel overlay-right">
                     <h1>Hello, Professors!</h1>
-                    <p>Enter your personal details and start journey with us</p>
+                    <p>Enter your personal details and start your journey with us</p>
                     <button class="ghost" id="signUp">Sign Up</button>
                 </div>
             </div>
         </div>
     </div>
-    <div id="toast-box"></div> <!-- Moved outside container for fixed positioning -->
+    <div id="toast-box"></div>
 
     <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification } from 'https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js';
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js';
 
     const firebaseConfig = {
         apiKey: "AIzaSyBJ8QFjU5tgTYmqjPglnDR6exszorUYXK8",
@@ -472,13 +598,12 @@
         const loginShowPassword = document.getElementById('login-show-password');
         const signupShowPassword = document.getElementById('signup-show-password');
         const toastBox = document.getElementById('toast-box');
+        const forgotPasswordButton = document.getElementById('forgot-password');
 
-        // Toast Notification Messages
         const successMsg = '<i class="fa-solid fa-circle-check"></i> Successfully completed';
         const errorMsg = '<i class="fa-solid fa-circle-xmark"></i> Error occurred';
         const invalidMsg = '<i class="fa-solid fa-circle-exclamation"></i> Invalid action';
 
-        // Toast Notification Function
         function showToast(msg) {
             let toast = document.createElement('div');
             toast.classList.add('toast');
@@ -487,7 +612,7 @@
 
             if (msg.includes('Error') || msg.includes('Invalid')) {
                 toast.classList.add('error');
-            } else if (msg.includes('verify')) {
+            } else if (msg.includes('verify') || msg.includes('reset')) {
                 toast.classList.add('invalid');
             }
 
@@ -536,7 +661,7 @@
                         showToast('<i class="fa-solid fa-circle-check"></i> Successfully signed in');
                         setTimeout(() => {
                             window.location.href = 'form.html';
-                        }, 1000); // Delay redirect to show toast
+                        }, 1000);
                     } else {
                         showToast('<i class="fa-solid fa-circle-exclamation"></i> Please verify your email first');
                         emailInput.value = "";
@@ -563,7 +688,7 @@
                 const user = userCredential.user;
                 await sendEmailVerification(user);
                 showToast('<i class="fa-solid fa-circle-check"></i> Account created, please verify your email');
-                container.classList.remove('right-panel-active'); // Switch to sign-in
+                container.classList.remove('right-panel-active');
                 await auth.signOut();
                 emailInput.value = "";
                 passwordInput.value = "";
@@ -587,6 +712,38 @@
                 emailInput.value = "";
                 passwordInput.value = "";
             }
+        });
+
+        forgotPasswordButton.addEventListener('click', () => {
+            const emailInput = document.getElementById("login-email");
+            const email = emailInput.value.trim();
+
+            if (!email) {
+                showToast('<i class="fa-solid fa-circle-exclamation"></i> Please enter your email first');
+                return;
+            }
+
+            sendPasswordResetEmail(auth, email)
+                .then(() => {
+                    showToast('<i class="fa-solid fa-circle-check"></i> Password reset email sent');
+                    emailInput.value = "";
+                    loginPassword.value = "";
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    let message;
+                    switch (errorCode) {
+                        case 'auth/invalid-email':
+                            message = '<i class="fa-solid fa-circle-xmark"></i> Invalid Email';
+                            break;
+                        case 'auth/user-not-found':
+                            message = '<i class="fa-solid fa-circle-xmark"></i> No user found with this email';
+                            break;
+                        default:
+                            message = '<i class="fa-solid fa-circle-xmark"></i> Error: ' + error.message;
+                    }
+                    showToast(message);
+                });
         });
     });
     </script>
