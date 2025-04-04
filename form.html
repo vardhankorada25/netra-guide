@@ -3,69 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Faculty Information Form</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <title>Faculty Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
+            color: #333;
+            position: relative;
+            overflow-x: hidden;
+        }
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            position: fixed;
+            height: 100%;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        .sidebar h2 {
+            margin: 0 0 20px;
+            text-align: center;
+            font-size: 24px;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            padding: 15px;
+            margin: 10px 0;
+            background-color: #34495e;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .sidebar ul li:hover, .sidebar ul li.active {
+            background-color: #ff416c;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            flex-grow: 1;
         }
         .container {
+            background-color: rgba(255, 255, 255, 0.95);
             padding: 20px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            margin: 20px auto;
-            max-width: 600px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
-            animation: fadeIn 1s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 700px;
+            margin: 0 auto;
         }
         h1 {
             font-size: 24px;
             text-align: center;
             margin-bottom: 20px;
-            color: #333;
+            color: #2c3e50;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
         }
         label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
-            color: #333;
         }
-        input[type="text"],
-        input[type="tel"],
-        input[type="email"],
-        textarea {
+        input, textarea {
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
-        input[type="text"]:focus,
-        input[type="tel"]:focus,
-        input[type="email"]:focus,
-        textarea:focus {
+        input:focus, textarea:focus {
             border-color: #ff416c;
-            box-shadow: 0 0 5px rgba(255, 65, 108, 0.5);
             outline: none;
         }
         textarea {
             height: 100px;
         }
-        input[type="file"] {
+        #subjects-list {
+            position: absolute;
+            background-color: white;
+            border: 1px solid #ccc;
+            max-height: 150px;
+            overflow-y: auto;
+            width: 100%;
+            z-index: 2;
             display: none;
         }
+        #subjects-list div {
+            padding: 8px;
+            cursor: pointer;
+        }
+        #subjects-list div:hover {
+            background-color: #f0f0f0;
+        }
         #photo-box {
-            position: relative;
             width: 150px;
             height: 150px;
             border: 2px dashed #ccc;
@@ -73,16 +125,12 @@
             margin: 0 auto 15px;
             overflow: hidden;
             cursor: pointer;
-            transition: border-color 0.3s ease;
-        }
-        #photo-box:hover {
-            border-color: #ff416c;
+            position: relative;
         }
         #photo-box img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: none;
         }
         #photo-box span {
             position: absolute;
@@ -90,234 +138,355 @@
             left: 50%;
             transform: translate(-50%, -50%);
             color: #ccc;
-            font-size: 14px;
-            text-align: center;
-        }
-        #edit-photo {
             display: none;
-            margin-top: 10px;
-            text-align: center;
-            cursor: pointer;
-            color: #ff416c;
-            text-decoration: underline;
         }
-        button[type="submit"] {
-            background-color: #ff416c;
-            color: white;
+        button {
             padding: 10px 20px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 16px;
-            display: block;
-            margin: 0 auto;
-            transition: background-color 0.3s ease, transform 0.3s ease;
+            background-color: #ff416c;
+            color: white;
+            margin: 10px;
+            transition: background-color 0.3s;
         }
-        button[type="submit"]:hover {
+        button:hover {
             background-color: #ff4b2b;
-            transform: scale(1.05);
         }
         #message {
+            text-align: center;
             margin-top: 20px;
-            font-size: 18px;
+            font-size: 16px;
+        }
+        .success { color: green; }
+        .error { color: red; }
+        .preview-card {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+            max-width: 300px;
+            margin: 20px auto;
             text-align: center;
         }
-        .success {
-            color: green;
+        .preview-card img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 10px;
         }
-        .error {
-            color: red;
+        .preview-card h3 {
+            margin: 5px 0;
+            font-size: 18px;
+        }
+        .preview-card p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #666;
+        }
+        /* Popup Notification Styles */
+        .notification {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            animation: slideIn 0.5s ease-in-out;
+        }
+        .notification.error {
+            background-color: #f44336;
+        }
+        @keyframes slideIn {
+            from { right: -300px; }
+            to { right: 20px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Faculty Information Form</h1>
-        <form id="faculty-form">
-            <div class="form-container">
-                <div class="photo-section">
-                    <div id="photo-box">
-                        <span id="photo-placeholder">Click to add photo</span>
-                        <img id="photo-img" alt="Faculty Photo">
-                        <input type="file" id="photo" name="photo" accept="image/*">
+    <div id="particles-js"></div>
+    <div class="dashboard">
+        <div class="sidebar">
+            <h2>Faculty Dashboard</h2>
+            <ul>
+                <li class="active" data-section="profile"><i class="fas fa-user"></i> Profile</li>
+                <li id="sign-out"><i class="fas fa-sign-out-alt"></i> Sign Out</li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="container" id="profile-section">
+                <h1>Your Profile</h1>
+                <form id="faculty-form">
+                    <div class="form-grid">
+                        <div>
+                            <div id="photo-box">
+                                <span id="photo-placeholder">Click to add photo</span>
+                                <img id="photo-img" src="https://tse3.mm.bing.net/th?id=OIP.6Rg_k8aQuRkZaBYnzOUJVwHaHa&pid=Api&P=0&h=180" alt="Faculty Photo">
+                                <input type="file" id="photo" name="photo" accept="image/*">
+                            </div>
+                            <label for="name">Name:</label>
+                            <input type="text" id="name" name="name" placeholder="Full Name" required>
+                            <label for="mobile">Mobile No:</label>
+                            <input type="tel" id="mobile" name="mobile" placeholder="Mobile Number" required>
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" name="email" placeholder="Email Address" required readonly>
+                        </div>
+                        <div>
+                            <label for="about">About:</label>
+                            <textarea id="about" name="about" placeholder="About yourself"></textarea>
+                            <label for="subjects">Subjects:</label>
+                            <div style="position: relative;">
+                                <textarea id="subjects" name="subjects" placeholder="Subjects (one per line)" required></textarea>
+                                <div id="subjects-list"></div>
+                            </div>
+                            <label for="experience">Experience:</label>
+                            <input type="text" id="experience" name="experience" placeholder="Years of Experience" required>
+                            <label for="location">Location:</label>
+                            <input type="text" id="location" name="location" placeholder="Location" required>
+                        </div>
                     </div>
-                    <div id="edit-photo">Edit Photo</div>
-                </div>
-                <div class="details-section">
-                    <label for="name">Name:</label>
-                    <input type="text" id="name" name="name" placeholder="Enter faculty's full name" required>
-                    <label for="mobile">Mobile No:</label>
-                    <input type="tel" id="mobile" name="mobile" placeholder="Enter faculty's mobile number" required>
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" placeholder="Enter faculty's email address" required>
-                    <label for="about">About:</label>
-                    <textarea id="about" name="about" placeholder="Tell us about the faculty"></textarea>
-                    <label for="subjects">Subjects:</label>
-                    <textarea id="subjects" name="subjects" placeholder="Enter subjects, one per line (e.g., Math\nScience\nEnglish)" required></textarea>
-                    <label for="experience">Experience:</label>
-                    <input type="text" id="experience" name="experience" placeholder="Enter faculty's years of experience" required>
-                    <label for="location">Location:</label>
-                    <input type="text" id="location" name="location" placeholder="Enter faculty's location" required>
-                </div>
+                    <div style="text-align: center;">
+                        <button type="submit">Save Profile</button>
+                        <button type="button" id="export-pdf">Export as PDF</button>
+                    </div>
+                </form>
             </div>
-            <button type="submit">Submit</button>
-        </form>
-        <div id="message"></div>
+        </div>
     </div>
+
+    <!-- Notification Popup -->
+    <div id="notification" class="notification"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBJ8QFjU5tgTYmqjPglnDR6exszorUYXK8",
+            authDomain: "netra-guide.firebaseapp.com",
+            projectId: "netra-guide",
+            storageBucket: "netra-guide.appspot.com",
+            messagingSenderId: "523274533182",
+            appId: "1:523274533182:web:221c3477c8a04d9c43546f",
+            databaseURL: "https://netra-guide-default-rtdb.firebaseio.com"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const defaultPhotoUrl = 'https://tse3.mm.bing.net/th?id=OIP.6Rg_k8aQuRkZaBYnzOUJVwHaHa&pid=Api&P=0&h=180';
+
         const form = document.getElementById('faculty-form');
         const messageDiv = document.getElementById('message');
         const photoInput = document.getElementById('photo');
         const photoBox = document.getElementById('photo-box');
         const photoImg = document.getElementById('photo-img');
         const photoPlaceholder = document.getElementById('photo-placeholder');
-        const editPhoto = document.getElementById('edit-photo');
-  
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";   
+        const subjectsInput = document.getElementById('subjects');
+        const subjectsList = document.getElementById('subjects-list');
+        const notification = document.getElementById('notification');
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBJ8QFjU5tgTYmqjPglnDR6exszorUYXK8",
-            authDomain: "netra-guide.firebaseapp.com",
-            projectId: "netra-guide",
-            storageBucket: "netra-guide.firebasestorage.app",
-            messagingSenderId: "523274533182",
-            appId: "1:523274533182:web:221c3477c8a04d9c43546f",
-            measurementId: "G-K7PSM8EPCG"
-        };
-        
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
-        const defaultPhotoUrl = 'https://tse3.mm.bing.net/th?id=OIP.6Rg_k8aQuRkZaBYnzOUJVwHaHa&pid=Api&P=0&h=180';
+        // Set default profile picture initially
+        photoImg.src = defaultPhotoUrl;
 
-        // Handle photo input change
+        // Particles Background
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: '#ff416c' },
+                shape: { type: 'circle' },
+                opacity: { value: 0.5, random: true },
+                size: { value: 3, random: true },
+                line_linked: { enable: true, distance: 150, color: '#ff416c', opacity: 0.4, width: 1 },
+                move: { enable: true, speed: 2, direction: 'none', random: false, straight: false, out_mode: 'out' }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: { onhover: { enable: true, mode: 'repulse' }, onclick: { enable: true, mode: 'push' } },
+                modes: { repulse: { distance: 100, duration: 0.4 }, push: { particles_nb: 4 } }
+            },
+            retina_detect: true
+        });
+
+        // Photo Handling
         photoInput.addEventListener('change', function() {
             const file = this.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     photoImg.src = e.target.result;
-                    photoImg.style.display = 'block';
                     photoPlaceholder.style.display = 'none';
-                    photoInput.style.display = 'none';
-                    editPhoto.style.display = 'block';
-                    photoBox.style.borderColor = '#ccc'; // Reset border color on valid selection
+                    updatePreview();
                 };
                 reader.readAsDataURL(file);
             }
         });
+        photoBox.addEventListener('click', () => photoInput.click());
 
-        // Handle edit photo click
-        editPhoto.addEventListener('click', function() {
-            photoInput.style.display = 'block';
-            photoInput.click();
+        // Subject Suggestion Autocomplete
+        const subjectSuggestions = ['Math', 'Science', 'English', 'History', 'Physics', 'Chemistry', 'Biology', 'Computer Science'];
+        subjectsInput.addEventListener('input', function() {
+            const value = this.value.split('\n').pop().toLowerCase();
+            subjectsList.innerHTML = '';
+            if (value) {
+                const matches = subjectSuggestions.filter(s => s.toLowerCase().startsWith(value));
+                if (matches.length) {
+                    subjectsList.style.display = 'block';
+                    matches.forEach(match => {
+                        const div = document.createElement('div');
+                        div.textContent = match;
+                        div.addEventListener('click', () => {
+                            const lines = subjectsInput.value.split('\n');
+                            lines[lines.length - 1] = match;
+                            subjectsInput.value = lines.join('\n');
+                            subjectsList.style.display = 'none';
+                            updatePreview();
+                        });
+                        subjectsList.appendChild(div);
+                    });
+                } else {
+                    subjectsList.style.display = 'none';
+                }
+            } else {
+                subjectsList.style.display = 'none';
+            }
+            updatePreview();
         });
-
-        // Trigger file input click when photo-box is clicked
-        photoBox.addEventListener('click', function() {
-            if (photoInput.style.display !== 'none') {
-                photoInput.click();
+        document.addEventListener('click', (e) => {
+            if (!subjectsInput.contains(e.target) && !subjectsList.contains(e.target)) {
+                subjectsList.style.display = 'none';
             }
         });
 
-        function retrivedata() {
-            const useremail = localStorage.getItem("userEmail");
-            const dbKey = useremail.replace(/[.#$[\]]/g, "_");
-            const dbRef = ref(database);
+        // Profile Preview Card
+        function updatePreview() {
+            document.getElementById('preview-photo').src = photoImg.src || defaultPhotoUrl;
+            document.getElementById('preview-name').textContent = document.getElementById('name').value || 'Your Name';
+            document.getElementById('preview-email').textContent = document.getElementById('email').value || 'your.email@example.com';
+            document.getElementById('preview-subjects').textContent = 'Subjects: ' + (document.getElementById('subjects').value.split('\n').filter(s => s.trim()).join(', ') || 'None');
+            document.getElementById('preview-location').textContent = 'Location: ' + (document.getElementById('location').value || 'Unknown');
+        }
+        ['name', 'email', 'subjects', 'location'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updatePreview);
+        });
 
-            get(child(dbRef, "users/" + dbKey))
-            .then((snapshot) => {
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    document.getElementById("name").value = data.name || "";
-                    document.getElementById("mobile").value = data.mobile || "";
-                    document.getElementById("email").value = data.email || "";
-                    document.getElementById("about").value = data.about || "";
-                    document.getElementById("subjects").value = data.subjects ? data.subjects.join('\n') : "";
-                    document.getElementById("experience").value = data.experience || "";
-                    document.getElementById("location").value = data.location || "";
-
-                    if (data.photoUrl) {
-                        photoImg.src = data.photoUrl;
-                        photoImg.style.display = "block";
-                        photoPlaceholder.style.display = "none";
-                        editPhoto.style.display = "block";
-                    } else {
-                        photoImg.src = defaultPhotoUrl; // Use default if no photo exists
-                        photoImg.style.display = "block";
-                        photoPlaceholder.style.display = "none";
-                        editPhoto.style.display = "block";
-                    }
-                } else {
-                    // If no data exists, set default photo
-                    photoImg.src = defaultPhotoUrl;
-                    photoImg.style.display = "block";
-                    photoPlaceholder.style.display = "none";
-                    editPhoto.style.display = "block";
-                }
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-                alert("An error occurred while retrieving data. Please try again.");
-            });
+        // Function to show notification
+        function showNotification(message, isError = false) {
+            notification.textContent = message;
+            notification.className = 'notification' + (isError ? ' error' : '');
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000); // Hide after 3 seconds
         }
 
-        form.addEventListener('submit', function(event) {
+        // Form Submission
+        form.addEventListener('submit', async function(event) {
             event.preventDefault();
+            const data = {
+                name: document.getElementById('name').value.trim(),
+                mobile: document.getElementById('mobile').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                about: document.getElementById('about').value.trim(),
+                subjects: document.getElementById('subjects').value.split('\n').filter(s => s.trim()),
+                experience: document.getElementById('experience').value.trim(),
+                location: document.getElementById('location').value.trim(),
+                photoUrl: photoImg.src || defaultPhotoUrl,
+                lastUpdated: new Date().toISOString()
+            };
 
-            // Validate photo input
-            if (photoInput.files.length === 0 && !photoImg.src) {
-                alert('Please select a photo.');
-                photoBox.style.borderColor = 'red';
+            if (!data.email) {
+                messageDiv.textContent = 'Email is required.';
+                messageDiv.className = 'error';
+                showNotification('Email is required.', true);
+                return;
+            }
+            if (data.subjects.length === 0) {
+                messageDiv.textContent = 'Please enter at least one subject.';
+                messageDiv.className = 'error';
+                showNotification('Please enter at least one subject.', true);
                 return;
             }
 
-            const name = document.getElementById("name").value.trim();
-            const mobile = document.getElementById("mobile").value.trim();
-            const email = document.getElementById("email").value.trim();
-            const about = document.getElementById("about").value.trim();
-            const subjectsText = document.getElementById("subjects").value.trim();
-            const subjectsArray = subjectsText.split('\n').map(subject => subject.trim()).filter(subject => subject !== '');
-            const experience = document.getElementById("experience").value.trim();
-            const location = document.getElementById("location").value.trim();
-
-            if (!email) {
-                alert("Please enter an email address.");
-                return;
+            const dbKey = data.email.replace(/[.#$[\]]/g, '_');
+            try {
+                await set(ref(database, 'users/' + dbKey), data);
+                showNotification('Data saved successfully!');
+            } catch (error) {
+                console.error('Error saving to Firebase:', error);
+                showNotification(`Error: ${error.message}`, true);
             }
+        });
 
-            if (subjectsArray.length === 0) {
-                alert("Please enter at least one subject.");
-                return;
+        // Retrieve Data
+        async function retrieveData() {
+            const useremail = localStorage.getItem('userEmail') || 'test@example.com';
+            const dbKey = useremail.replace(/[.#$[\]]/g, '_');
+            try {
+                const snapshot = await get(child(ref(database), 'users/' + dbKey));
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    document.getElementById('name').value = data.name || '';
+                    document.getElementById('mobile').value = data.mobile || '';
+                    document.getElementById('email').value = data.email || '';
+                    document.getElementById('about').value = data.about || '';
+                    document.getElementById('subjects').value = data.subjects ? data.subjects.join('\n') : '';
+                    document.getElementById('experience').value = data.experience || '';
+                    document.getElementById('location').value = data.location || '';
+                    photoImg.src = data.photoUrl || defaultPhotoUrl;
+                    photoPlaceholder.style.display = 'none';
+                    updatePreview();
+                } else {
+                    photoImg.src = defaultPhotoUrl;
+                    photoPlaceholder.style.display = 'none';
+                    document.getElementById('email').value = useremail;
+                    updatePreview();
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                photoImg.src = defaultPhotoUrl;
+                photoPlaceholder.style.display = 'none';
+                messageDiv.textContent = `Error fetching data: ${error.message}`;
+                messageDiv.className = 'error';
+                showNotification(`Error fetching data: ${error.message}`, true);
             }
+        }
 
-            const dbKey = email.replace(/[.#$[\]]/g, "_");
-            const photoUrl = photoImg.src || defaultPhotoUrl; // Use the current image src or default
+        // Export to PDF
+        document.getElementById('export-pdf').addEventListener('click', () => {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.text('Faculty Profile', 10, 10);
+            doc.addImage(photoImg.src, 'JPEG', 10, 20, 50, 50);
+            doc.text(`Name: ${document.getElementById('name').value || 'N/A'}`, 70, 30);
+            doc.text(`Email: ${document.getElementById('email').value || 'N/A'}`, 70, 40);
+            doc.text(`Subjects: ${document.getElementById('subjects').value.split('\n').join(', ') || 'None'}`, 10, 80);
+            doc.save('faculty_profile.pdf');
+        });
 
-            set(ref(database, "users/" + dbKey), {
-                name: name,
-                mobile: mobile,
-                email: email,
-                about: about,
-                subjects: subjectsArray,
-                experience: experience,
-                location: location,
-                photoUrl: photoUrl // Pass the string directly
-            })
-            .then(() => {
-                alert("Data saved successfully!");
-                messageDiv.textContent = "Data saved successfully!";
-                messageDiv.className = "success";
-            })
-            .catch((error) => {
-                console.error("Firebase error:", error);
-                alert("An error occurred. Please try again.");
-                messageDiv.textContent = "Error: " + error.message;
-                messageDiv.className = "error";
+        // Sign Out
+        document.getElementById('sign-out').addEventListener('click', () => {
+            if (confirm('Are you sure you want to sign out?')) {
+                localStorage.removeItem('userEmail');
+                window.location.href = 'login.html';
+            }
+        });
+
+        // Sidebar Navigation
+        document.querySelectorAll('.sidebar li').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelector('.sidebar li.active')?.classList.remove('active');
+                item.classList.add('active');
             });
         });
 
-        retrivedata();
+        // Initial Load
+        retrieveData();
     </script>
 </body>
 </html>
