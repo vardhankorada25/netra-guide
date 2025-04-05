@@ -19,378 +19,497 @@
         }
 
         body.dark-mode {
-            --background-color: #333;
-            --container-bg: #444;
-            --text-color: #f4f4f4;
-            --secondary-text: #ccc;
-            --input-bg: #555;
+            --background-color: #2c2c2c;
+            --container-bg: #3a3a3a;
+            --text-color: #e0e0e0;
+            --secondary-text: #b0b0b0;
+            --input-bg: #4a4a4a;
             --border-color: #ff4b2b;
-            --shadow-color: rgba(0, 0, 0, 0.2);
-            --highlight-color: #ff416c;
-            --accent-color: #ff4b2b;
+            --shadow-color: rgba(0, 0, 0, 0.3);
         }
 
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, var(--background-color), #f9f9f9 50%, var(--background-color));
+            background: var(--background-color);
             margin: 0;
             padding: 20px;
             color: var(--text-color);
             min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
-            opacity: 0;
-            animation: fadeIn 1s ease-in forwards;
-        }
-
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(255, 75, 43, 0.1) 10%, transparent 50%);
-            opacity: 0.3;
-            z-index: -1;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            transition: background-color 0.3s ease;
         }
 
         .header {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 0 auto 20px;
-            background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
-            box-shadow: 0 0 15px var(--shadow-color);
+            margin-bottom: 20px;
+        }
+
+        .switch {
             position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch #input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #2196f3;
+            transition: 0.4s;
+            z-index: 0;
             overflow: hidden;
         }
 
-        .header::after {
-            content: '';
+        .sun-moon {
             position: absolute;
-            width: 120%;
-            height: 120%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            animation: shine 3s infinite;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: yellow;
+            transition: 0.4s;
         }
 
-        @keyframes shine {
-            0% { transform: translateX(-100%); }
-            20% { transform: translateX(100%); }
-            100% { transform: translateX(100%); }
+        #input:checked + .slider {
+            background-color: black;
         }
 
-        .theme-toggle {
-            background: none;
-            border: none;
-            font-size: 1.8em;
-            cursor: pointer;
-            color: #fff;
-            transition: transform 0.3s ease;
-            z-index: 1;
+        #input:focus + .slider {
+            box-shadow: 0 0 1px #2196f3;
         }
 
-        .theme-toggle:hover {
-            transform: scale(1.2) rotate(15deg);
+        #input:checked + .slider .sun-moon {
+            transform: translateX(26px);
+            background-color: white;
+            animation: rotate-center 0.6s ease-in-out both;
+        }
+
+        .moon-dot {
+            opacity: 0;
+            transition: 0.4s;
+            fill: gray;
+        }
+
+        #input:checked + .slider .sun-moon .moon-dot {
+            opacity: 1;
+        }
+
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round .sun-moon {
+            border-radius: 50%;
+        }
+
+        #moon-dot-1 { left: 10px; top: 3px; position: absolute; width: 6px; height: 6px; z-index: 4; }
+        #moon-dot-2 { left: 2px; top: 10px; position: absolute; width: 10px; height: 10px; z-index: 4; }
+        #moon-dot-3 { left: 16px; top: 18px; position: absolute; width: 3px; height: 3px; z-index: 4; }
+        #light-ray-1 { left: -8px; top: -8px; position: absolute; width: 43px; height: 43px; z-index: -1; fill: white; opacity: 10%; }
+        #light-ray-2 { left: -50%; top: -50%; position: absolute; width: 55px; height: 55px; z-index: -1; fill: white; opacity: 10%; }
+        #light-ray-3 { left: -18px; top: -18px; position: absolute; width: 60px; height: 60px; z-index: -1; fill: white; opacity: 10%; }
+
+        .cloud-light, .cloud-dark {
+            position: absolute;
+            animation-name: cloud-move;
+            animation-duration: 6s;
+            animation-iteration-count: infinite;
+        }
+        .cloud-light { fill: #eee; }
+        .cloud-dark { fill: #ccc; animation-delay: 1s; }
+
+        #cloud-1 { left: 30px; top: 15px; width: 40px; }
+        #cloud-2 { left: 44px; top: 10px; width: 20px; }
+        #cloud-3 { left: 18px; top: 24px; width: 30px; }
+        #cloud-4 { left: 36px; top: 18px; width: 40px; }
+        #cloud-5 { left: 48px; top: 14px; width: 20px; }
+        #cloud-6 { left: 22px; top: 26px; width: 30px; }
+
+        @keyframes cloud-move {
+            0% { transform: translateX(0px); }
+            40% { transform: translateX(4px); }
+            80% { transform: translateX(-4px); }
+            100% { transform: translateX(0px); }
+        }
+
+        .stars {
+            transform: translateY(-32px);
+            opacity: 0;
+            transition: 0.4s;
+        }
+
+        .star {
+            fill: white;
+            position: absolute;
+            transition: 0.4s;
+            animation-name: star-twinkle;
+            animation-duration: 2s;
+            animation-iteration-count: infinite;
+        }
+
+        #input:checked + .slider .stars {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        #star-1 { width: 20px; top: 2px; left: 3px; animation-delay: 0.3s; }
+        #star-2 { width: 6px; top: 16px; left: 3px; }
+        #star-3 { width: 12px; top: 20px; left: 10px; animation-delay: 0.6s; }
+        #star-4 { width: 18px; top: 0px; left: 18px; animation-delay: 1.3s; }
+
+        @keyframes star-twinkle {
+            0% { transform: scale(1); }
+            40% { transform: scale(1.2); }
+            80% { transform: scale(0.8); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes rotate-center {
+            0% { transform: rotate(0); }
+            100% { transform: rotate(360deg); }
         }
 
         .container {
             width: 90%;
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
             background: var(--container-bg);
-            border-radius: 15px;
-            box-shadow: 0 0 20px var(--shadow-color);
-            padding: 2rem;
-            position: relative;
-            overflow: hidden;
-            border: 3px solid transparent;
-            background-clip: padding-box;
-        }
-
-        .container::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
-            z-index: -1;
-            border-radius: 17px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px var(--shadow-color);
+            padding: 30px;
+            transition: background-color 0.3s ease;
         }
 
         h1 {
             text-align: center;
-            color: var(--text-color);
-            font-size: clamp(2rem, 5vw, 3rem);
-            margin-bottom: 25px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            background: linear-gradient(45deg, var(--accent-color), var(--highlight-color));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            opacity: 0;
-            animation: slideDown 0.8s ease-out 0.2s forwards;
-        }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
+            color: var(--highlight-color);
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            font-weight: 600;
         }
 
         #search {
             width: 100%;
-            max-width: 700px;
-            padding: 15px 20px;
-            margin: 0 auto 25px;
+            max-width: 600px;
+            padding: 12px 20px;
+            margin: 0 auto 20px;
             display: block;
-            border: 1px solid var(--border-color);
-            border-radius: 25px;
-            box-sizing: border-box;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
             background: var(--input-bg);
             color: var(--text-color);
-            font-size: 1.1rem;
-            opacity: 0;
-            transform: scale(0.9);
-            animation: scaleIn 0.6s ease-out 0.4s forwards;
-            transition: all 0.3s ease;
-            box-shadow: inset 0 0 5px var(--shadow-color);
-        }
-        #search:hover {
-            border-color: var(--highlight-color);
-            box-shadow: 0 0 5px var(--highlight-color), inset 0 0 3px var(--shadow-color);
-            transform: scale(1.03);
-            outline: none;
-        }
-        #search:focus {
-            border-color: var(--highlight-color);
-            box-shadow: 0 0 10px var(--highlight-color), inset 0 0 5px var(--shadow-color);
-            transform: scale(1.03);
-            outline: none;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
-        @keyframes scaleIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
+        #search:focus {
+            border-color: var(--highlight-color);
+            box-shadow: 0 0 8px rgba(255, 65, 108, 0.3);
+            outline: none;
         }
 
         #filters {
-            margin-bottom: 25px;
-            text-align: center;
-            opacity: 0;
-            animation: fadeIn 0.8s ease-out 0.6s forwards;
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 20px; /* Increased gap for better spacing */
+            gap: 15px;
+            margin-bottom: 30px;
         }
 
         #filters input, #filters select {
-            padding: 10px 15px; /* Reduced padding for a slimmer look */
-            border: 2px solid var(--border-color); /* Thinner border */
-            border-radius: 30px; /* More rounded corners */
-            width: 200px; /* Slightly reduced width */
-            background: linear-gradient(45deg, var(--input-bg), #fff); /* Gradient background */
+            padding: 10px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            width: 200px;
+            background: var(--input-bg);
             color: var(--text-color);
-            font-size: 0.95rem; /* Slightly smaller font */
-            opacity: 0;
-            transform: translateY(15px);
-            animation: slideUp 0.6s ease-out forwards;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 5px var(--shadow-color); /* Lighter shadow */
-            cursor: pointer; /* Added for select element */
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
         }
 
-        #filters input:nth-child(1) { animation-delay: 0.8s; }
-        #filters select:nth-child(2) { animation-delay: 0.9s; }
-
-        #filters input:hover, #filters select:hover,
         #filters input:focus, #filters select:focus {
             border-color: var(--highlight-color);
-            box-shadow: 0 4px 12px rgba(255, 65, 108, 0.3), inset 0 0 5px var(--shadow-color); /* Enhanced hover/focus shadow */
-            transform: scale(1.05) translateY(0); /* Slight scale up */
-            background: linear-gradient(45deg, #fff, var(--input-bg)); /* Reverse gradient on hover */
+            box-shadow: 0 0 8px rgba(255, 65, 108, 0.3);
             outline: none;
         }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+        #filters input::after, #filters select::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        #filters input:hover::after, #filters select:hover::after {
+            opacity: 1;
         }
 
         #faculty-list {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(17em, 1fr));
+            gap: 20px;
         }
 
         .faculty-card {
-            background: var(--input-bg);
-            color: var(--text-color);
+            width: 17em;
+            height: 22.5em;
+            background: var(--container-bg);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5em;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            box-sizing: border-box;
             border: 2px solid var(--border-color);
-            padding: 8px;
+        }
+
+        body.dark-mode .faculty-card {
+            background: #171717;
+            border: 2px solid var(--border-color);
+        }
+
+        .faculty-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px var(--shadow-color);
+        }
+
+        .faculty-card span {
+            font-weight: 600;
+            color: var(--text-color);
             text-align: center;
-            border-radius: 8px;
-            box-shadow: 0 0 6px var(--shadow-color);
-            position: relative;
+            display: block;
+            font-size: 1.2em;
+            margin-bottom: 0.5em;
+        }
+
+        .faculty-card .info {
+            font-weight: 400;
+            color: var(--secondary-text);
+            display: block;
+            text-align: center;
+            font-size: 0.85em;
+            margin: 0.6em 0;
+            line-height: 1.4;
+        }
+
+        .faculty-card .img {
+            width: 5.5em;
+            height: 5.5em;
+            background: var(--input-bg);
+            border-radius: 50%;
+            margin: 0 auto 1em;
             overflow: hidden;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.4s ease;
+            border: 2px solid var(--accent-color);
+            transition: border-color 0.3s ease;
+        }
+
+        .faculty-card:hover .img {
+            border-color: var(--highlight-color);
+        }
+
+        .faculty-card .img img {
             width: 100%;
-            max-width: 300px;
-            min-height: 120px;
+            height: 100%;
+            object-fit: cover;
         }
 
-        .faculty-card.visible {
-            animation: slideUpFadeIn 0.6s ease-out forwards;
+        .faculty-card button {
+            padding: 0.7em 1.5em;
+            display: block;
+            margin: auto auto 0;
+            border-radius: 20px;
+            border: 2px solid var(--border-color);
+            font-weight: 600;
+            background: transparent;
+            color: var(--text-color);
+            transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+            cursor: pointer;
         }
 
-        @keyframes slideUpFadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .faculty-card button:hover {
+            background: var(--highlight-color);
+            color: white;
+            border-color: var(--highlight-color);
         }
 
-        .faculty-card::before {
-            content: '';
-            position: absolute;
+        .no-results, .loading {
+            font-size: 1.2rem;
+            color: var(--secondary-text);
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+        }
+
+        .loading::after {
+            content: ' ⬤ ⬤ ⬤';
+            animation: loadingDots 1.5s infinite;
+        }
+
+        @keyframes loadingDots {
+            0% { content: ' ⬤ ⬤ ⬤'; }
+            33% { content: '⬤ ⬤ ⬤ '; }
+            66% { content: '⬤ ⬤ ⬤'; }
+            100% { content: ' ⬤ ⬤ ⬤'; }
+        }
+
+        /* Modal Styles with Animation */
+        .modal {
+            display: none;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(255, 75, 43, 0.1), transparent);
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
             opacity: 0;
-            transition: opacity 0.4s ease;
-            z-index: 0;
+            transition: opacity 0.3s ease;
         }
 
-        .faculty-card:hover::before {
+        .modal.active {
+            display: block;
             opacity: 1;
         }
 
-        .faculty-card:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 4px 12px var(--shadow-color);
-            border-color: var(--highlight-color);
+        .modal-content {
+            background: var(--container-bg);
+            margin: 5% auto;
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 0 0 15px var(--shadow-color);
+            transform: scale(0.9);
+            transition: transform 1s ease;
         }
 
-        .faculty-card img {
-            width: 50px;
-            height: 50px;
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-content img {
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 8px;
+            display: block;
+            margin: 0 auto 20px;
             border: 2px solid var(--accent-color);
-            transition: transform 0.4s ease, border-color 0.4s ease;
-            position: relative;
-            z-index: 1;
         }
 
-        .faculty-card:hover img {
-            transform: rotate(10deg) scale(1.1);
-            border-color: var(--highlight-color);
-        }
-
-        .faculty-card h2 {
-            font-size: 1em;
-            margin: 8px 0;
-            color: var(--text-color);
-            font-weight: bold;
-            position: relative;
-            z-index: 1;
-            transition: color 0.4s ease;
-        }
-
-        .faculty-card:hover h2 {
-            color: var(--highlight-color);
-        }
-
-        .faculty-card p {
-            font-size: 0.75em;
-            color: var(--secondary-text);
-            margin: 3px 0;
-            line-height: 1.3;
-            position: relative;
-            z-index: 1;
-        }
-
-        .faculty-card p strong {
-            color: var(--text-color);
-            transition: color 0.4s ease;
-        }
-
-        .faculty-card:hover p strong {
-            color: var(--highlight-color);
-        }
-
-        .no-results {
-            font-size: 1.3em;
+        .modal-content h2 {
             color: var(--highlight-color);
             text-align: center;
-            width: 100%;
-            padding: 20px;
-            opacity: 0;
-            animation: fadeIn 0.8s ease-out forwards;
-            font-style: italic;
+            margin-bottom: 20px;
         }
 
-        @media screen and (min-width: 768px) {
-            .container {
-                width: 85%;
-            }
+        .modal-content p {
+            margin: 10px 0;
+            color: var(--text-color);
         }
 
-        @media screen and (max-width: 480px) {
+        .modal-content .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            color: var(--text-color);
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        @media (max-width: 768px) {
             #filters {
                 flex-direction: column;
                 align-items: center;
             }
             #filters input, #filters select {
-                width: 85%; /* Adjusted for mobile */
-                margin-bottom: 15px;
-            }
-            .container {
-                padding: 1rem;
-            }
-            #faculty-list {
-                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                width: 100%;
+                max-width: 300px;
             }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <button class="theme-toggle" aria-label="Toggle theme">
-            <i class="fas fa-moon"></i>
-        </button>
+        <label class="switch">
+            <input type="checkbox" id="input">
+            <span class="slider round">
+                <span class="sun-moon">
+                    <svg class="moon-dot" id="moon-dot-1"><circle cx="3" cy="3" r="3"/></svg>
+                    <svg class="moon-dot" id="moon-dot-2"><circle cx="5" cy="5" r="5"/></svg>
+                    <svg class="moon-dot" id="moon-dot-3"><circle cx="1.5" cy="1.5" r="1.5"/></svg>
+                    <svg id="light-ray-1"><circle cx="21.5" cy="21.5" r="21.5"/></svg>
+                    <svg id="light-ray-2"><circle cx="27.5" cy="27.5" r="27.5"/></svg>
+                    <svg id="light-ray-3"><circle cx="30" cy="30" r="30"/></svg>
+                </span>
+                <svg class="cloud-light" id="cloud-1"><circle cx="20" cy="10" r="10"/></svg>
+                <svg class="cloud-light" id="cloud-2"><circle cx="10" cy="5" r="5"/></svg>
+                <svg class="cloud-light" id="cloud-3"><circle cx="15" cy="7" r="7"/></svg>
+                <svg class="cloud-dark" id="cloud-4"><circle cx="20" cy="10" r="10"/></svg>
+                <svg class="cloud-dark" id="cloud-5"><circle cx="10" cy="5" r="5"/></svg>
+                <svg class="cloud-dark" id="cloud-6"><circle cx="15" cy="7" r="7"/></svg>
+                <span class="stars">
+                    <svg class="star" id="star-1"><polygon points="10,0 12,8 20,10 12,12 10,20 8,12 0,10 8,8"/></svg>
+                    <svg class="star" id="star-2"><polygon points="3,0 4,2 6,3 4,4 3,6 2,4 0,3 2,2"/></svg>
+                    <svg class="star" id="star-3"><polygon points="6,0 7,4 10,6 7,8 6,10 5,8 2,6 5,4"/></svg>
+                    <svg class="star" id="star-4"><polygon points="9,0 11,6 16,9 11,12 9,18 7,12 2,9 7,6"/></svg>
+                </span>
+            </span>
+        </label>
     </div>
     <div class="container">
         <h1>Faculty Directory</h1>
-        <input type="text" id="search" placeholder="Search by name, about, or subjects">
+        <input type="text" id="search" placeholder="Search by name, about, or subjects" aria-label="Search faculty">
         <div id="filters">
-            <input type="text" id="location-filter" placeholder="Filter by location">
-            <select id="experience-filter">
-                <option value="">All Experiences</option>
-                <option value="0-5">Less than 5 years</option>
-                <option value="5-10">5-10 years</option>
-                <option value="10+">More than 10 years</option>
+            <input type="text" id="location-filter" placeholder="Filter by location" data-tooltip="Enter a city or region" aria-label="Filter by location">
+            <select id="experience-filter" data-tooltip="Select experience range" aria-label="Filter by experience">
+                <option value="">All Experience Levels</option>
+                <option value="0-5">0-5 Years</option>
+                <option value="5-10">5-10 Years</option>
+                <option value="10+">10+ Years</option>
             </select>
         </div>
         <div id="faculty-list">
-            <!-- Faculty cards will be appended here -->
+            <p class="loading">Loading faculty data...</p>
+        </div>
+    </div>
+
+    <!-- Modal for faculty details -->
+    <div id="facultyModal" class="modal">
+        <div class="modal-content">
+            <button class="close">×</button>
+            <img id="modalImage" src="" alt="Faculty Photo">
+            <h2 id="modalName"></h2>
+            <p><strong>Email:</strong> <span id="modalEmail"></span></p>
+            <p><strong>Subjects:</strong> <span id="modalSubjects"></span></p>
+            <p><strong>Location:</strong> <span id="modalLocation"></span></p>
+            <p><strong>Experience:</strong> <span id="modalExperience"></span></p>
+            <p><strong>About:</strong> <span id="modalAbout"></span></p>
         </div>
     </div>
 
@@ -405,18 +524,22 @@
             storageBucket: "netra-guide.firebasestorage.app",
             messagingSenderId: "523274533182",
             appId: "1:523274533182:web:221c3477c8a04d9c43546f",
-            measurementId: "G-K7PSM8EPCG"
+            measurementId: "G-K7PSM8EPCG",
+            databaseURL: "https://netra-guide-default-rtdb.firebaseio.com"
         };
 
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
+        const defaultPhoto = 'https://via.placeholder.com/80?text=No+Photo';
 
         async function getAllFaculty() {
             try {
                 const snapshot = await get(ref(database, "users"));
                 const facultyList = [];
                 snapshot.forEach(childSnapshot => {
-                    facultyList.push(childSnapshot.val());
+                    const facultyData = childSnapshot.val();
+                    facultyData.id = childSnapshot.key;
+                    facultyList.push(facultyData);
                 });
                 return facultyList;
             } catch (error) {
@@ -429,42 +552,59 @@
             const facultyListDiv = document.getElementById("faculty-list");
             facultyListDiv.innerHTML = "";
             if (facultyList.length === 0) {
-                facultyListDiv.innerHTML = '<p class="no-results">No faculty found.</p>';
+                facultyListDiv.innerHTML = '<p class="no-results">No faculty members found. Try adjusting your filters.</p>';
                 return;
             }
-            facultyList.forEach((faculty, index) => {
+            facultyList.forEach(faculty => {
                 const card = document.createElement("div");
                 card.className = "faculty-card";
-
-                let cardContent = `
-                    <img src="${faculty.photoUrl || 'default-photo.png'}" alt="${faculty.name || 'Faculty'}">
-                    <h2>${faculty.name || 'Unnamed Faculty'}</h2>
+                card.innerHTML = `
+                    <span>${faculty.name || 'Unnamed Faculty'}</span>
+                    <div class="info">${faculty.email || 'N/A'}</div>
+                    <div class="info">${faculty.subjects ? faculty.subjects.join(', ') : 'N/A'}</div>
+                    <div class="info">${faculty.location || 'N/A'}</div>
+                    <div class="info">${faculty.experience || 'N/A'}</div>
+                    <button data-faculty-id="${faculty.id}">View Profile</button>
                 `;
-
-                for (const [key, value] of Object.entries(faculty)) {
-                    if (key !== "photoUrl" && key !== "name") {
-                        let displayValue = value;
-                        if (Array.isArray(value)) {
-                            displayValue = value.join(", ");
-                        } else if (value === null || value === undefined) {
-                            displayValue = "N/A";
-                        } else if (typeof value === "object") {
-                            displayValue = JSON.stringify(value);
-                        }
-                        const displayKey = key.charAt(0).toUpperCase() + key.slice(1);
-                        cardContent += `<p><strong>${displayKey}:</strong> ${displayValue}</p>`;
-                    }
-                }
-
-                card.innerHTML = cardContent;
                 facultyListDiv.appendChild(card);
             });
 
-            checkVisibility();
+            const modal = document.getElementById("facultyModal");
+            const closeBtn = document.querySelector(".modal .close");
+
+            document.querySelectorAll('.faculty-card button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const facultyId = e.target.getAttribute('data-faculty-id');
+                    const faculty = facultyList.find(f => f.id === facultyId);
+                    if (faculty) {
+                        document.getElementById("modalImage").src = faculty.photoUrl || defaultPhoto;
+                        document.getElementById("modalName").textContent = faculty.name || 'Unnamed Faculty';
+                        document.getElementById("modalEmail").textContent = faculty.email || 'N/A';
+                        document.getElementById("modalSubjects").textContent = faculty.subjects ? faculty.subjects.join(', ') : 'N/A';
+                        document.getElementById("modalLocation").textContent = faculty.location || 'N/A';
+                        document.getElementById("modalExperience").textContent = faculty.experience || 'N/A';
+                        document.getElementById("modalAbout").textContent = faculty.about || 'No information available';
+                        modal.style.display = "block";
+                        setTimeout(() => modal.classList.add("active"), 10); // Slight delay for transition
+                    }
+                });
+            });
+
+            closeBtn.addEventListener('click', () => {
+                modal.classList.remove("active");
+                setTimeout(() => modal.style.display = "none", 300); // Wait for animation to complete
+            });
+
+            window.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove("active");
+                    setTimeout(() => modal.style.display = "none", 300); // Wait for animation to complete
+                }
+            });
         }
 
         function getExperienceYears(experience) {
-            const match = experience.match(/\d+/);
+            const match = experience ? experience.match(/\d+/) : null;
             return match ? parseInt(match[0], 10) : 0;
         }
 
@@ -477,17 +617,13 @@
                     subject.toLowerCase().includes(searchLower)
                 );
                 const locationMatch = faculty.location && faculty.location.toLowerCase().includes(location.toLowerCase());
-                const experienceYears = faculty.experience ? getExperienceYears(faculty.experience) : 0;
+                const experienceYears = getExperienceYears(faculty.experience);
                 let experienceMatch = true;
 
                 if (experienceRange) {
-                    if (experienceRange === "0-5") {
-                        experienceMatch = experienceYears < 5;
-                    } else if (experienceRange === "5-10") {
-                        experienceMatch = experienceYears >= 5 && experienceYears <= 10;
-                    } else if (experienceRange === "10+") {
-                        experienceMatch = experienceYears > 10;
-                    }
+                    if (experienceRange === "0-5") experienceMatch = experienceYears < 5;
+                    else if (experienceRange === "5-10") experienceMatch = experienceYears >= 5 && experienceYears <= 10;
+                    else if (experienceRange === "10+") experienceMatch = experienceYears > 10;
                 }
 
                 return (nameMatch || aboutMatch || subjectsMatch || !searchTerm) && 
@@ -496,44 +632,26 @@
             });
         }
 
-        function checkVisibility() {
-            const cards = document.querySelectorAll(".faculty-card");
-            const triggerBottom = window.innerHeight * 0.8;
-
-            cards.forEach((card, index) => {
-                const cardTop = card.getBoundingClientRect().top;
-                if (cardTop < triggerBottom) {
-                    card.classList.add("visible");
-                    card.style.animationDelay = `${index * 0.1}s`;
-                }
-            });
-        }
-
         document.addEventListener("DOMContentLoaded", async () => {
-            const facultyList = await getAllFaculty();
-            displayFaculty(facultyList);
-
+            const facultyListDiv = document.getElementById("faculty-list");
             const searchInput = document.getElementById("search");
             const locationInput = document.getElementById("location-filter");
             const experienceSelect = document.getElementById("experience-filter");
-            const themeToggle = document.querySelector('.theme-toggle');
+            const themeToggle = document.getElementById("input");
             const body = document.body;
 
             if (localStorage.getItem('theme') === 'dark') {
                 body.classList.add('dark-mode');
-                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                themeToggle.checked = true;
             }
 
-            themeToggle.addEventListener('click', () => {
+            themeToggle.addEventListener('change', () => {
                 body.classList.toggle('dark-mode');
-                if (body.classList.contains('dark-mode')) {
-                    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-                    localStorage.setItem('theme', 'dark');
-                } else {
-                    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-                    localStorage.setItem('theme', 'light');
-                }
+                localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
             });
+
+            const facultyList = await getAllFaculty();
+            displayFaculty(facultyList);
 
             function updateDisplay() {
                 const searchTerm = searchInput.value.trim();
@@ -546,8 +664,6 @@
             searchInput.addEventListener("input", updateDisplay);
             locationInput.addEventListener("input", updateDisplay);
             experienceSelect.addEventListener("change", updateDisplay);
-
-            window.addEventListener("scroll", checkVisibility);
         });
     </script>
 </body>
