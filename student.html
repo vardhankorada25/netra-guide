@@ -7,25 +7,27 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         :root {
-            --background-color: #f4f4f4;
-            --container-bg: #fff;
-            --text-color: #333;
-            --secondary-text: #666;
-            --input-bg: #f9f9f9;
-            --border-color: #ff4b2b;
-            --shadow-color: rgba(0, 0, 0, 0.1);
-            --highlight-color: #ff416c;
-            --accent-color: #ff4b2b;
+            --background-color: #f4f4f4; /* Body background from first CSS */
+            --container-bg: #fff; /* Container background from first CSS */
+            --text-color: #333; /* Primary text color from first CSS */
+            --secondary-text: #666; /* Secondary text color from first CSS */
+            --input-bg: #f9f9f9; /* Input/content background from first CSS */
+            --border-color: #ff4b2b; /* Border/accent color from first CSS */
+            --shadow-color: rgba(0, 0, 0, 0.1); /* Shadow color from first CSS */
+            --highlight-color: #ff416c; /* Highlight color from first CSS */
+            --accent-color: #ff4b2b; /* Accent color from first CSS */
         }
 
         body.dark-mode {
-            --background-color: #2c2c2c;
-            --container-bg: #3a3a3a;
-            --text-color: #e0e0e0;
-            --secondary-text: #b0b0b0;
-            --input-bg: #4a4a4a;
-            --border-color: #ff4b2b;
-            --shadow-color: rgba(0, 0, 0, 0.3);
+            --background-color: #2c2c2c; /* Dark mode background */
+            --container-bg: #3a3a3a; /* Dark mode container */
+            --text-color: #f4f4f4; /* Adjusted to match light theme's background for contrast */
+            --secondary-text: #b0b0b0; /* Lighter gray for secondary text */
+            --input-bg: #4a4a4a; /* Darker input background */
+            --border-color: #ff4b2b; /* Keep consistent with light theme */
+            --shadow-color: rgba(0, 0, 0, 0.3); /* Darker shadow */
+            --highlight-color: #ff416c; /* Keep consistent with light theme */
+            --accent-color: #ff4b2b; /* Keep consistent with light theme */
         }
 
         body {
@@ -65,7 +67,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: #2196f3;
+            background: linear-gradient(45deg, #ff4b2b, #ff416c); /* Gradient from first CSS */
             transition: 0.4s;
             z-index: 0;
             overflow: hidden;
@@ -78,28 +80,28 @@
             width: 26px;
             left: 4px;
             bottom: 4px;
-            background-color: yellow;
+            background-color: #fff; /* White to match container-bg */
             transition: 0.4s;
         }
 
         #input:checked + .slider {
-            background-color: black;
+            background: linear-gradient(45deg, #333, #666); /* Darker gradient for dark mode */
         }
 
         #input:focus + .slider {
-            box-shadow: 0 0 1px #2196f3;
+            box-shadow: 0 0 1px var(--highlight-color);
         }
 
         #input:checked + .slider .sun-moon {
             transform: translateX(26px);
-            background-color: white;
+            background-color: #f4f4f4; /* Matches light theme background */
             animation: rotate-center 0.6s ease-in-out both;
         }
 
         .moon-dot {
             opacity: 0;
             transition: 0.4s;
-            fill: gray;
+            fill: var(--secondary-text);
         }
 
         #input:checked + .slider .sun-moon .moon-dot {
@@ -117,9 +119,9 @@
         #moon-dot-1 { left: 10px; top: 3px; position: absolute; width: 6px; height: 6px; z-index: 4; }
         #moon-dot-2 { left: 2px; top: 10px; position: absolute; width: 10px; height: 10px; z-index: 4; }
         #moon-dot-3 { left: 16px; top: 18px; position: absolute; width: 3px; height: 3px; z-index: 4; }
-        #light-ray-1 { left: -8px; top: -8px; position: absolute; width: 43px; height: 43px; z-index: -1; fill: white; opacity: 10%; }
-        #light-ray-2 { left: -50%; top: -50%; position: absolute; width: 55px; height: 55px; z-index: -1; fill: white; opacity: 10%; }
-        #light-ray-3 { left: -18px; top: -18px; position: absolute; width: 60px; height: 60px; z-index: -1; fill: white; opacity: 10%; }
+        #light-ray-1 { left: -8px; top: -8px; position: absolute; width: 43px; height: 43px; z-index: -1; fill: #fff; opacity: 10%; }
+        #light-ray-2 { left: -50%; top: -50%; position: absolute; width: 55px; height: 55px; z-index: -1; fill: #fff; opacity: 10%; }
+        #light-ray-3 { left: -18px; top: -18px; position: absolute; width: 60px; height: 60px; z-index: -1; fill: #fff; opacity: 10%; }
 
         .cloud-light, .cloud-dark {
             position: absolute;
@@ -127,7 +129,7 @@
             animation-duration: 6s;
             animation-iteration-count: infinite;
         }
-        .cloud-light { fill: #eee; }
+        .cloud-light { fill: #f9f9f9; } /* Matches input-bg */
         .cloud-dark { fill: #ccc; animation-delay: 1s; }
 
         #cloud-1 { left: 30px; top: 15px; width: 40px; }
@@ -151,7 +153,7 @@
         }
 
         .star {
-            fill: white;
+            fill: #fff; /* Matches container-bg */
             position: absolute;
             transition: 0.4s;
             animation-name: star-twinkle;
@@ -237,33 +239,12 @@
             color: var(--text-color);
             font-size: 1rem;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
         }
 
         #filters input:focus, #filters select:focus {
             border-color: var(--highlight-color);
             box-shadow: 0 0 8px rgba(255, 65, 108, 0.3);
             outline: none;
-        }
-
-        #filters input::after, #filters select::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            top: -35px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #333;
-            color: #fff;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 0.8em;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s ease;
-        }
-
-        #filters input:hover::after, #filters select:hover::after {
-            opacity: 1;
         }
 
         #faculty-list {
@@ -287,7 +268,7 @@
         }
 
         body.dark-mode .faculty-card {
-            background: #171717;
+            background: #3a3a3a; /* Matches dark mode container-bg */
             border: 2px solid var(--border-color);
         }
 
@@ -350,8 +331,8 @@
         }
 
         .faculty-card button:hover {
-            background: var(--highlight-color);
-            color: white;
+            background: linear-gradient(45deg, #ff4b2b, #ff416c); /* Gradient from first CSS */
+            color: #fff;
             border-color: var(--highlight-color);
         }
 
